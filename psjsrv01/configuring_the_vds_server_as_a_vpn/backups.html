@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Бэкапы: автоматическое резервное копирование | MyBlog</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="GravCMS" />
+    <meta name="description" content="Sergey Poleckiy&apos;s online blog" />
+
+    <link rel="icon" type="image/png" href="/user/themes/quark/images/favicon.png" />
+    <link rel="canonical" href="https://psj-notes.ru/ru/configuring_the_vds_server_as_a_vpn/backups" />
+
+                        
+            
+    <link href="/user/plugins/markdown-notices/assets/notices.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/form/assets/form-styles.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/login/css/login.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/spectre.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/theme.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/custom.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/line-awesome.min.css" type="text/css" rel="stylesheet">
+
+    <script src="/system/assets/jquery/jquery-3.x.min.js"></script>
+
+</head>
+<body id="top" class=" header-fixed header-animated sticky-footer">
+    <div id="page-wrapper">
+            <section id="header" class="section">
+            <section class="container grid-lg">
+                <nav class="navbar">
+                    <section class="navbar-section logo">
+                        <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>                    </section>
+                    <section class="navbar-section desktop-menu">
+
+                        <nav class="dropmenu animated">
+                                                    
+<ul >
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="active">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+                                                </nav>
+
+                        
+                    </section>
+                </nav>
+            </section>
+        </section>
+        <div class="mobile-menu">
+            <div class="button_container" id="toggle">
+                <span class="top"></span>
+                <span class="middle"></span>
+                <span class="bottom"></span>
+            </div>
+        </div>
+    
+    
+        <section id="start">
+                    <section id="body-wrapper" class="section">
+                <section class="container grid-lg">
+                                            
+                                            <h1>Бэкапы: автоматическое резервное копирование</h1>
+<blockquote>
+<p><em>«Рукописи не горят. А вот серверы — ещё как. — Воланд, перебирая страницы»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство описывает настройку автоматического резервного копирования критически важных данных сервера: файлов Grav CMS, конфигурации x-ui и системных конфигурационных файлов.</p>
+<p>Мы начинаем с сервера, на котором уже работают все сервисы (шаги 01–10). Сервер принимает сайт, раздаёт VPN, отправляет почту. Пришло время обеспечить сохранность данных.</p>
+<p><strong>Цель данного руководства</strong> — настроить ежедневные и еженедельные бэкапы, отправлять отчёты на почту и хранить ротацию копий.</p>
+<blockquote>
+<p><strong>Входные данные:</strong> Postfix настроен и отправляет почту (шаг 07), Grav CMS установлен (шаг 09), x-ui работает (шаг 10).</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Что и как бэкапим</h2>
+<h3>1.1. Стратегия</h3>
+<table>
+<thead>
+<tr>
+<th>Данные</th>
+<th>Периодичность</th>
+<th>Хранение</th>
+<th>Размер</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grav CMS (файлы, контент, плагины)</td>
+<td>Ежедневно</td>
+<td>7 копий</td>
+<td>~50–200 MB</td>
+</tr>
+<tr>
+<td>Конфигурация x-ui (база данных)</td>
+<td>Ежедневно</td>
+<td>14 копий</td>
+<td>~1–5 MB</td>
+</tr>
+<tr>
+<td>Системные конфиги (nginx, postfix, ufw, wireguard)</td>
+<td>Еженедельно</td>
+<td>4 копии</td>
+<td>~1 MB</td>
+</tr>
+</tbody>
+</table>
+<h3>1.2. Куда сохраняем</h3>
+<p>Бэкапы хранятся локально в <code>/var/backups/</code>. Для критически важных данных рекомендуется также настроить копирование на внешнее хранилище (например, S3, rsync на другой сервер).</p>
+<hr />
+<h2>Раздел 2. Скрипты бэкапов</h2>
+<h3>2.1. Бэкап Grav CMS</h3>
+<p>Создайте <code>/usr/local/bin/backup-grav.sh</code>:</p>
+<pre><code class="language-bash">#!/bin/bash
+BACKUP_DIR="/var/backups/grav"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+KEEP=7
+
+mkdir -p "$BACKUP_DIR"
+
+tar czf "$BACKUP_DIR/grav-$TIMESTAMP.tar.gz" \
+    -C /var/www/psj-notes.ru \
+    --exclude=cache \
+    --exclude=images \
+    --exclude=tmp \
+    user/ config/ composer.json composer.lock
+
+# Удалить старые бэкапы (оставить только KEEP последних)
+ls -t "$BACKUP_DIR"/grav-*.tar.gz 2&gt;/dev/null | tail -n +$((KEEP+1)) | xargs -r rm
+
+echo "Grav backup: grav-$TIMESTAMP.tar.gz ($(du -h "$BACKUP_DIR/grav-$TIMESTAMP.tar.gz" | cut -f1))"</code></pre>
+<h3>2.2. Бэкап x-ui</h3>
+<p>Создайте <code>/usr/local/bin/backup-xui.sh</code>:</p>
+<pre><code class="language-bash">#!/bin/bash
+BACKUP_DIR="/var/backups/xui"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+KEEP=14
+
+mkdir -p "$BACKUP_DIR"
+
+# База данных x-ui (SQLite)
+if [ -f /etc/x-ui/x-ui.db ]; then
+    cp /etc/x-ui/x-ui.db "$BACKUP_DIR/xui-$TIMESTAMP.db"
+elif [ -f /usr/local/x-ui/bin/x-ui.db ]; then
+    cp /usr/local/x-ui/bin/x-ui.db "$BACKUP_DIR/xui-$TIMESTAMP.db"
+fi
+
+# Конфигурация xray
+if [ -f /usr/local/x-ui/bin/config.json ]; then
+    cp /usr/local/x-ui/bin/config.json "$BACKUP_DIR/xray-config-$TIMESTAMP.json"
+fi
+
+# Удалить старые бэкапы
+ls -t "$BACKUP_DIR"/xui-*.db 2&gt;/dev/null | tail -n +$((KEEP+1)) | xargs -r rm
+ls -t "$BACKUP_DIR"/xray-config-*.json 2&gt;/dev/null | tail -n +$((KEEP+1)) | xargs -r rm
+
+echo "x-ui backup: xui-$TIMESTAMP.db ($(du -h "$BACKUP_DIR/xui-$TIMESTAMP.db" | cut -f1))"</code></pre>
+<h3>2.3. Бэкап системных конфигов</h3>
+<p>Создайте <code>/usr/local/bin/backup-system.sh</code>:</p>
+<pre><code class="language-bash">#!/bin/bash
+BACKUP_DIR="/var/backups/system"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+KEEP=4
+
+mkdir -p "$BACKUP_DIR"
+
+tar czf "$BACKUP_DIR/system-$TIMESTAMP.tar.gz" \
+    /etc/nginx/ \
+    /etc/postfix/ \
+    /etc/ufw/ \
+    /etc/ssh/sshd_config \
+    /etc/fail2ban/ \
+    /etc/default/sslh \
+    /etc/wireguard/ \
+    /etc/apt/apt.conf.d/20auto-upgrades \
+    /etc/apt/apt.conf.d/50unattended-upgrades
+
+ls -t "$BACKUP_DIR"/system-*.tar.gz 2&gt;/dev/null | tail -n +$((KEEP+1)) | xargs -r rm
+
+echo "System backup: system-$TIMESTAMP.tar.gz ($(du -h "$BACKUP_DIR/system-$TIMESTAMP.tar.gz" | cut -f1))"</code></pre>
+<h3>2.4. Права на выполнение</h3>
+<pre><code class="language-bash">sudo chmod +x /usr/local/bin/backup-{grav,xui,system}.sh</code></pre>
+<hr />
+<h2>Раздел 3. Скрипт полного бэкапа</h2>
+<p>Создайте <code>/usr/local/bin/backup-all.sh</code> — единый скрипт, который запускает все три и отправляет отчёт:</p>
+<pre><code class="language-bash">#!/bin/bash
+
+REPORT=$(mktemp)
+
+echo "=== Backup report: $(date) ===" &gt;&gt; "$REPORT"
+
+/usr/local/bin/backup-grav.sh &gt;&gt; "$REPORT" 2&gt;&amp;1
+/usr/local/bin/backup-xui.sh &gt;&gt; "$REPORT" 2&gt;&amp;1
+
+# Системный — только по воскресеньям
+if [ "$(date +%u)" -eq 7 ]; then
+    /usr/local/bin/backup-system.sh &gt;&gt; "$REPORT" 2&gt;&amp;1
+fi
+
+# Отправить отчёт на почту
+cat "$REPORT" | sudo mail -s "Backup report: $(hostname) — $(date +%Y-%m-%d)" sergey@poleckiy.ru
+
+rm "$REPORT"</code></pre>
+<pre><code class="language-bash">sudo chmod +x /usr/local/bin/backup-all.sh</code></pre>
+<hr />
+<h2>Раздел 4. Настройка cron</h2>
+<h3>4.1. Ежедневный бэкап в 3:00</h3>
+<pre><code class="language-bash">sudo tee /etc/cron.d/backups &lt;&lt; 'EOF'
+# Ежедневный бэкап Grav, x-ui и системы (по воскресеньям)
+0 3 * * * root /usr/local/bin/backup-all.sh
+EOF</code></pre>
+<h3>4.2. Проверка</h3>
+<pre><code class="language-bash">sudo systemctl restart cron
+sudo run-parts --test /etc/cron.d  # Проверить синтаксис</code></pre>
+<hr />
+<h2>Раздел 5. Восстановление из бэкапа</h2>
+<h3>5.1. Grav</h3>
+<pre><code class="language-bash">sudo tar xzf /var/backups/grav/grav-20260708-030001.tar.gz -C /var/www/psj-notes.ru/
+sudo chown -R www-data:www-data /var/www/psj-notes.ru/</code></pre>
+<h3>5.2. x-ui</h3>
+<pre><code class="language-bash">sudo systemctl stop x-ui
+sudo cp /var/backups/xui/xui-20260708-030001.db /usr/local/x-ui/bin/x-ui.db
+sudo systemctl start x-ui</code></pre>
+<h3>5.3. Системные конфиги</h3>
+<pre><code class="language-bash">sudo tar xzf /var/backups/system/system-20260708-030001.tar.gz -C /</code></pre>
+<p>Будьте осторожны — tar восстановит файлы поверх существующих. Лучше распаковать в отдельную директорию и копировать вручную.</p>
+<hr />
+<h2>Раздел 6. Мониторинг</h2>
+<p>Проверьте, что письма-отчёты приходят на почту. Если письмо не пришло — проверьте Postfix:</p>
+<pre><code class="language-bash">sudo tail -20 /var/log/mail.log</code></pre>
+<p>И запустите бэкап вручную для диагностики:</p>
+<pre><code class="language-bash">sudo /usr/local/bin/backup-all.sh</code></pre>
+<hr />
+<blockquote>
+<p><em>«Теперь ваши данные в безопасности, — подытожил Воланд. — По крайней мере, до тех пор, пока вы помните, где лежит ключ от сейфа. А ключ, как известно, должен быть не в сейфе.»</em></p>
+</blockquote>
+
+                </section>
+            </section>
+                </section>
+
+    </div>
+
+            <section id="footer" class="section bg-gray">
+    <section class="container grid-lg">
+        <p><a href="https://getgrav.org">Grav</a> was <i class="fa fa-code"></i> with <i class="fa fa-heart-o pulse "></i> by <a href="https://trilby.media">Trilby Media</a>.</p>
+    </section>
+</section>
+    
+        <div class="mobile-container">
+        <div class="overlay" id="overlay">
+            <div class="mobile-logo">
+                <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>            </div>
+            <nav class="overlay-menu">
+                
+<ul class="tree">
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="active">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+            </nav>
+        </div>
+    </div>
+    
+    <script src="/user/themes/quark/js/jquery.treemenu.js"></script>
+<script src="/user/themes/quark/js/site.js"></script>
+
+
+</body>
+</html>

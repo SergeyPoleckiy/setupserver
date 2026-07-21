@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Настройка SSH, zsh и удобства работы на сервере | MyBlog</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="GravCMS" />
+    <meta name="description" content="Sergey Poleckiy&apos;s online blog" />
+
+    <link rel="icon" type="image/png" href="/user/themes/quark/images/favicon.png" />
+    <link rel="canonical" href="https://psj-notes.ru/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" />
+
+                        
+            
+    <link href="/user/plugins/markdown-notices/assets/notices.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/form/assets/form-styles.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/login/css/login.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/spectre.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/theme.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/custom.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/line-awesome.min.css" type="text/css" rel="stylesheet">
+
+    <script src="/system/assets/jquery/jquery-3.x.min.js"></script>
+
+</head>
+<body id="top" class=" header-fixed header-animated sticky-footer">
+    <div id="page-wrapper">
+            <section id="header" class="section">
+            <section class="container grid-lg">
+                <nav class="navbar">
+                    <section class="navbar-section logo">
+                        <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>                    </section>
+                    <section class="navbar-section desktop-menu">
+
+                        <nav class="dropmenu animated">
+                                                    
+<ul >
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="active">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+                                                </nav>
+
+                        
+                    </section>
+                </nav>
+            </section>
+        </section>
+        <div class="mobile-menu">
+            <div class="button_container" id="toggle">
+                <span class="top"></span>
+                <span class="middle"></span>
+                <span class="bottom"></span>
+            </div>
+        </div>
+    
+    
+        <section id="start">
+                    <section id="body-wrapper" class="section">
+                <section class="container grid-lg">
+                                            
+                                            <h1>Настройка SSH, zsh и удобства работы на сервере</h1>
+<blockquote>
+<p><em>«Комфорт — вещь субъективная, — заметил Воланд, поправляя воротник. — Но ключи в двери — это объективно.»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство продолжает настройку сервера, начатую в предыдущем документе. Мы начинаем с уже работающего SSH-сервера, к которому мы можем подключиться по паролю под пользователем <code>uservpn</code>.</p>
+<p>Цель данного руководства — за один последовательный проход выполнить три группы задач:</p>
+<ol>
+<li>
+<p><strong>Настроить SSH-ключи</strong> — переход от входа по паролю к входу по ключу, как это положено.</p>
+</li>
+<li>
+<p><strong>Временно разрешить <code>sudo</code> без пароля</strong> — для удобства последующей настройки (в следующих руководствах это будет пересмотрено).</p>
+</li>
+<li>
+<p><strong>Установить и настроить zsh</strong> — с темой powerlevel10k, шрифтами и плагинами автодополнения.</p>
+</li>
+</ol>
+<p>Все шаги пронумерованы и должны выполняться <strong>в указанном порядке</strong>. Перескакивать не рекомендуется.</p>
+<blockquote>
+<p><strong>Входные данные:</strong> вы уже создали пользователя <code>uservpn</code> с <code>sudo</code> и подключились к серверу по SSH и паролю (<code>ssh uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code>). Пользователь <code>uservpn</code> — тот, под которым мы работаем.</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Временная настройка <code>sudo</code> без пароля</h2>
+<h3>1.1. Что такое <code>sudo</code> и почему временно убираем пароль</h3>
+<p><strong><code>sudo</code></strong> (superuser do) — утилита, позволяющая обычным пользователям выполнять команды от имени <code>root</code>. По умолчанию при каждом вызове <code>sudo</code> запрашивает пароль пользователя — это защита: если кто-то получил доступ к вашему терминалу, он не сможет молча выполнить команду администратора.</p>
+<p>Однако в процессе настройки сервера нам придётся запустить десятки команд через <code>sudo</code>. Вводить пароль каждый раз — утомительно и замедляет процесс. Поэтому мы временно разрешим <code>sudo</code> <strong>без пароля</strong>. После завершения всех настроек это будет пересмотрено.</p>
+<h3>1.2. Создание файла в <code>/etc/sudoers.d/</code></h3>
+<p>Подключитесь к серверу по SSH (пока ещё по паролю):</p>
+<pre><code class="language-bash">ssh uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Создайте временный файл <code>sudoers</code> от <code>root</code>. Для этого сначала получите права root:</p>
+<pre><code class="language-bash">sudo -i</code></pre>
+<p>Система запросит пароль <code>uservpn</code>. Введите его. Теперь вы работаете от <code>root</code> (приглашение сменилось на <code>#</code>).</p>
+<p>Создайте файл:</p>
+<pre><code class="language-bash">echo 'uservpn ALL=(ALL) NOPASSWD:ALL' &gt; /etc/sudoers.d/uservpn
+chmod 440 /etc/sudoers.d/uservpn</code></pre>
+<p>Пояснение параметров:</p>
+<table>
+<thead>
+<tr>
+<th>Директива</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uservpn</code></td>
+<td>Пользователь, которому даём право</td>
+</tr>
+<tr>
+<td><code>ALL=(ALL)</code></td>
+<td>На всех хостах, от имени любого пользователя</td>
+</tr>
+<tr>
+<td><code>NOPASSWD:ALL</code></td>
+<td>Все команды без пароля</td>
+</tr>
+<tr>
+<td><code>chmod 440</code></td>
+<td>Чтение для root и группы, запись никому</td>
+</tr>
+</tbody>
+</table>
+<p>Проверьте синтаксис файла <code>sudoers</code>:</p>
+<pre><code class="language-bash">visudo -c</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>/etc/sudoers: parsed OK
+/etc/sudoers.d/uservpn: parsed OK</code></pre>
+<p>Если видите <code>parsed OK</code> — всё в порядке. Если ошибка — исправьте до продолжения, иначе <code>sudo</code> может перестать работать.</p>
+<h3>1.3. Возвращаемся под <code>uservpn</code></h3>
+<p>Выйдите из-под <code>root</code>:</p>
+<pre><code class="language-bash">exit</code></pre>
+<p>Проверьте, что <code>sudo</code> работает без пароля:</p>
+<pre><code class="language-bash">sudo whoami</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>root</code></pre>
+<p>Запроса пароля не было — <code>sudo</code> настроен.</p>
+<blockquote>
+<p><em>Воланд задумчиво покачал головой:</em><br />
+<em>«Открытая дверь — удобная вещь для хозяина. И столь же удобная для всех гостей, включая непрошеных. Пользуйтесь временно, пока настраиваете хозяйство. А потом — закройте, пожалуйста.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 2. Генерация SSH-ключа на рабочей станции</h2>
+<h3>2.1. Что такое SSH-ключи</h3>
+<p>Пара SSH-ключей — это два файла, связанных математически:</p>
+<ul>
+<li>
+<p><strong>Приватный ключ</strong> (<code>id_ed25519</code>) — хранится <strong>только</strong> на вашей рабочей станции. Никогда, ни при каких обстоятельствах он не покидает ваш компьютер.</p>
+</li>
+<li>
+<p><strong>Публичный ключ</strong> (<code>id_ed25519.pub</code>) — копируется на сервер. По нему сервер проверяет, что вы владеете парным приватным ключом.</p>
+</li>
+</ul>
+<p>Алгоритм <strong>ed25519</strong> — современный, быстрый и компактный. Он был спроектирован в 2015 году специально для SSH и превосходит RSA по криптостойкости при меньшем размере.</p>
+<h3>2.2. Генерация</h3>
+<p>Этот шаг выполняется <strong>на вашем компьютере</strong> (рабочая станция), а не на сервере. Откройте любой терминал на своём компьютере и выполните:</p>
+<pre><code class="language-bash">ssh-keygen -t ed25519 -C "uservpn@server"</code></pre>
+<p>Система спросит:</p>
+<pre><code>Enter file in which to save the key (/home/ваш_пользователь/.ssh/id_ed25519):</code></pre>
+<p>Нажмите Enter — оставьте путь по умолчанию.</p>
+<pre><code>Enter passphrase (empty for no passphrase):</code></pre>
+<p>Здесь у вас два варианта:</p>
+<ul>
+<li>
+<p><strong>Пустой passphrase</strong> (дважды нажмите Enter) — вход без дополнительной авторизации. Удобно, но кто получит файл — получит доступ.</p>
+</li>
+<li>
+<p><strong>Passphrase</strong> (задайте пароль) — даже если файл ключа украдут, без passphrase он бесполезен.</p>
+</li>
+</ul>
+<p>Для серверной настройки можно начать без passphrase. Защиту ключа паролем вы добавите позже, когда сочтёте нужным.</p>
+<p>После генерации вы увидите что-то вроде:</p>
+<pre><code>Your identification has been saved in /home/ваш_пользователь/.ssh/id_ed25519
+Your public key has been saved in /home/ваш_пользователь/.ssh/id_ed25519.pub
+The key fingerprint is: SHA256:... uservpn@server</code></pre>
+<hr />
+<h2>Раздел 3. Копирование публичного ключа на сервер</h2>
+<h3>3.1. Копирование ключа утилитой <code>ssh-copy-id</code></h3>
+<p>На рабочей станции выполните:</p>
+<pre><code class="language-bash">ssh-copy-id uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Система запросит пароль <code>uservpn</code>. Введите его. Ключ будет скопирован в файл <code>~/.ssh/authorized_keys</code> пользователя на сервере.</p>
+<p>Ожидаемый результат:</p>
+<pre><code>Number of key(s) added: 1</code></pre>
+<h3>3.2. Проверка входа по ключу</h3>
+<p>Попробуйте подключиться:</p>
+<pre><code class="language-bash">ssh uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Если ключ скопирован верно — сервер пустит <strong>без запроса пароля</strong> (если вы не ставили passphrase).</p>
+<p>Если пароль <strong>всё ещё запрашивается</strong> — проверьте права на домашней директории сервера. SSH-сервер очень строг к разрешениям. Вернитесь в раздел 4.2 после настройки сервера.</p>
+<blockquote>
+<p><em>Коровьев, подмигивая:</em><br />
+<em>«Ключик-то у вас — золотой. Только дверь ещё не заменили. Сейчас поменяем — и старый пароль станет таким же бесполезным, как прошлогодний снег.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 4. Отключение входа по паролю на сервере</h2>
+<h3>4.1. Настройка <code>sshd_config</code></h3>
+<p>Теперь, когда ключ работает, отключим вход по паролю. Это не даст злоумышленнику подобрать пароль методом перебора (brute force).</p>
+<p>Подключитесь к серверу (теперь по ключу):</p>
+<pre><code class="language-bash">ssh uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Сделайте резервную копию конфигурации:</p>
+<pre><code class="language-bash">sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%Y%m%d_%H%M%S)</code></pre>
+<p>Проверьте, что файл сохранён:</p>
+<pre><code class="language-bash">ls -la /etc/ssh/sshd_config.backup.*</code></pre>
+<p>Теперь отредактируйте файл:</p>
+<pre><code class="language-bash">sudo nano /etc/ssh/sshd_config</code></pre>
+<p>Откройте для редактирования (если nano не установлен — установите: <code>sudo apt install -y nano</code>).</p>
+<p>Найдите следующие параметры и установите их значения:</p>
+<pre><code>PasswordAuthentication no
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+MaxAuthTries 3</code></pre>
+<p>Если строки закоментированы (начинаются с <code>#</code>) — раскомментируйте, убрав <code>#</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значение</th>
+<th>Назначение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PasswordAuthentication</code></td>
+<td><code>no</code></td>
+<td>Запретить вход по паролю</td>
+</tr>
+<tr>
+<td><code>PubkeyAuthentication</code></td>
+<td><code>yes</code></td>
+<td>Разрешить вход по ключу</td>
+</tr>
+<tr>
+<td><code>ChallengeResponseAuthentication</code></td>
+<td><code>no</code></td>
+<td>Отключить дополнительную аутентификацию</td>
+</tr>
+<tr>
+<td><code>UsePAM</code></td>
+<td><code>yes</code></td>
+<td>Использовать PAM (Pluggable Authentication Modules) — модульную систему авторизации Linux</td>
+</tr>
+<tr>
+<td><code>MaxAuthTries</code></td>
+<td><code>3</code></td>
+<td>Максимум 3 попытки авторизации на одно подключение</td>
+</tr>
+</tbody>
+</table>
+<p>Сохраните файл (<code>Ctrl+O</code>, Enter) и выйдите (<code>Ctrl+X</code>).</p>
+<h3>4.2. Проверка прав домашней директории</h3>
+<p>SSH-сервер откажется подключаться, если права на домашнюю директорию или <code>.ssh</code> слишком открыты. Проверьте и исправьте:</p>
+<pre><code class="language-bash">chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+chmod 755 ~</code></pre>
+<p>Проверьте текущие значения:</p>
+<pre><code class="language-bash">ls -la ~
+ls -la ~/.ssh/</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>drwxr-xr-x  ... .ssh/
+-rw-------  ... authorized_keys</code></pre>
+<h3>4.3. Перезапуск SSH-службы</h3>
+<p>Проверьте конфигурацию на синтаксические ошибки <strong>перед</strong> перезапуском:</p>
+<pre><code class="language-bash">sudo sshd -t</code></pre>
+<p>Если ошибок нет — команда вернёт пустой вывод. Если есть — исправьте конфигурацию до перезапуска.</p>
+<p>В Ubuntu 24.04 SSH работает через <strong>socket activation</strong> — это когда systemd запускает sshd не как непрерывный процесс, а «по требованию», при каждом новом подключении. Поэтому перезапускаем через <code>ssh.socket</code>:</p>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl restart ssh.socket
+sudo systemctl restart ssh.service</code></pre>
+<h3>4.4. Проверка соединения</h3>
+<p><strong>Не закрывайте текущую сессию SSH!</strong> Откройте <strong>новый</strong> терминал и попробуйте подключиться:</p>
+<pre><code class="language-bash">ssh uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Если вошли — настройка успешна.</p>
+<p>Если <strong>не вошли</strong> и соединение отклонено — парольный вход уже отключён, а ключ почему-то не сработал. <strong>Не закрывайте старую сессию</strong> — через неё можно вернуться назад и исправить проблему.</p>
+<p>Проверьте логи:</p>
+<pre><code class="language-bash">sudo journalctl -u ssh -n 50 --no-pager</code></pre>
+<p>В логах будет указана причина отказа (обычно — неверные права или ключ не найден).</p>
+<blockquote>
+<p><em>Воланд, перечитывая журнал:</em><br />
+<em>«Отказали. И совершенно правильно. Дверь не открывается — значит, она работает как замок, а не калитка. Проверьте ключ, проверьте права — и пробуйте снова.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 5. Установка и настройка zsh</h2>
+<h3>5.1. Что такое zsh и зачем его ставить</h3>
+<p><strong>zsh</strong> (Z Shell) — расширенная оболочка командной строки, совместимая с Bash, но с расширенным набором возможностей. Она поддерживает:</p>
+<ul>
+<li>
+<p><strong>Автодополнение</strong> — гораздо более интеллектуальное, чем Bash;</p>
+</li>
+<li>
+<p><strong>Исправление опечаток</strong> — zsh предложит правильный вариант, если вы ошиблись в команде;</p>
+</li>
+<li>
+<p><strong>Расширенный globbing</strong> — более мощные шаблоны поиска файлов;</p>
+</li>
+<li>
+<p><strong>Поддержку тем</strong> — внешний вид приглашения (prompt) настраивается практически без ограничений.</p>
+</li>
+</ul>
+<p>Bash — хороший, надёжный, но zsh — это Bash, который пошёл учиться дальше.</p>
+<h3>5.2. Установка зависимостей</h3>
+<p>Установите zsh, git и другие необходимые пакеты:</p>
+<pre><code class="language-bash">sudo apt install -y zsh git curl unzip fontconfig</code></pre>
+<h3>5.3. Установка oh-my-zsh</h3>
+<p><strong>oh-my-zsh</strong> — фреймворк для управления конфигурацией zsh. Он предоставляет систему тем, плагинов и автоматического обновления. Без него настройка zsh потребовала бы ручного редактирования десятков параметров.</p>
+<p>Установите:</p>
+<pre><code class="language-bash">sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended</code></pre>
+<p>Флаг <code>--unattended</code> подавляет интерактивные вопросы — oh-my-zsh установится автоматически.</p>
+<p>После установки проверьте, что zsh запустился:</p>
+<pre><code class="language-bash">zsh</code></pre>
+<p>Вы увидите новое приглашение командной строки и, возможно, предложение создать стартовый файл конфигурации. Ответьте <code>y</code>. Вернитесь в bash:</p>
+<pre><code class="language-bash">exit</code></pre>
+<h3>5.4. Установка zsh как оболочки по умолчанию</h3>
+<p>Чтобы при следующем входе по SSH автоматически запускался zsh (а не bash), измените оболочку пользователя:</p>
+<pre><code class="language-bash">sudo chsh -s $(which zsh) uservpn</code></pre>
+<p>Проверьте результат:</p>
+<pre><code class="language-bash">getent passwd uservpn | cut -d: -f7</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>/usr/bin/zsh</code></pre>
+<h3>5.5. Установка темы powerlevel10k</h3>
+<p><strong>powerlevel10k</strong> — тема для oh-my-zsh, которая отображает в приглашении командной строки массу полезной информации: текущая директория, git-репозиторий, версия Python, время выполнения команд и многое другое. При этом она работает быстро.</p>
+<p>Установите:</p>
+<pre><code class="language-bash">git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k</code></pre>
+<p>Откройте файл конфигурации:</p>
+<pre><code class="language-bash">nano ~/.zshrc</code></pre>
+<p>Найдите строку:</p>
+<pre><code>ZSH_THEME="robbyrussell"</code></pre>
+<p>И замените на:</p>
+<pre><code>ZSH_THEME="powerlevel10k/powerlevel10k"</code></pre>
+<p>Сохраните (<code>Ctrl+O</code>, Enter) и выйдите (<code>Ctrl+X</code>).</p>
+<h3>5.6. Установка шрифта MesloLGS NF</h3>
+<p>Тема powerlevel10k использует специальные символы (пиктограммы), которые присутствуют только в <strong>Nerd Fonts</strong>. Стандартный шрифт терминала эти символы не отобразит — вы увидите ромбики или знаки вопроса.</p>
+<p>На <strong>сервере</strong> установите шрифт (он пригодится для совместимости и локального использования):</p>
+<pre><code class="language-bash">mkdir -p ~/.local/share/fonts
+cd ~/.local/share/fonts
+wget -qO MesloLGS-NF.zip https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF.zip
+unzip -o MesloLGS-NF.zip &amp;&amp; rm MesloLGS-NF.zip
+fc-cache -fv
+cd ~</code></pre>
+<p>На <strong>рабочей станции</strong> (вашем компьютере) загрузите шрифт по ссылке <code>https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF.zip</code>, распакуйте и установите в настройках терминала. Выберите <code>MesloLGS NF Regular</code> в разделе шрифтов вашего терминального эмулятора.</p>
+<p>Без этого пиктограммы будут отображаться как квадратики.</p>
+<h3>5.7. Установка плагинов</h3>
+<p>Установите три плагина, которые значительно упростят работу с терминалом:</p>
+<pre><code class="language-bash"># Автодополнение команд — предлагает варианты из истории
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# Подсветка синтаксиса — команды зелёные, ошибочные — красные
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# Автодополнение в процессе ввода — выпадающий список вариантов
+git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete</code></pre>
+<p>Каждый плагин:</p>
+<table>
+<thead>
+<tr>
+<th>Плагин</th>
+<th>Что делает</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zsh-autosuggestions</code></td>
+<td>Показывает серым текст, который вы ранее набирали; нажмите <code>→</code> чтобы принять</td>
+</tr>
+<tr>
+<td><code>zsh-syntax-highlighting</code></td>
+<td>Подсвечивает команды: правильные — зелёным, неизвестные — красным</td>
+</tr>
+<tr>
+<td><code>zsh-autocomplete</code></td>
+<td>Выпадающий список вариантов при вводе команды аргумента</td>
+</tr>
+</tbody>
+</table>
+<h3>5.8. Активация плагинов</h3>
+<p>Откройте файл <code>~/.zshrc</code>:</p>
+<pre><code class="language-bash">nano ~/.zshrc</code></pre>
+<p>Найдите строку с плагинами (по умолчанию это выглядит так):</p>
+<pre><code>plugins=(git)</code></pre>
+<p>Замените на:</p>
+<pre><code>plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete)</code></pre>
+<p>Сохраните (<code>Ctrl+O</code>, Enter) и выйдите (<code>Ctrl+X</code>).</p>
+<h3>5.9. Первый запуск zsh и мастер powerlevel10k</h3>
+<p>Все настройки сохранены, но мы всё ещё находимся в bash. Запустите zsh вручную, чтобы проверить, что всё работает:</p>
+<pre><code class="language-bash">zsh</code></pre>
+<p>При первом запуске zsh может спросить, создать ли стартовый файл — если спросят, ответьте <code>y</code>.</p>
+<p>Как только zsh загрузится, тема powerlevel10k автоматически запустит мастер настройки — интерактивный опрос по выбору стиля приветствия. Мастер задаст серию вопросов:</p>
+<ul>
+<li>
+<p>Какой стиль предпочитаете — «ромб», «классический», «современный»?</p>
+</li>
+<li>
+<p>Иконки — unicode-символы или ASCII?</p>
+</li>
+<li>
+<p>Показывать ли часы?</p>
+</li>
+<li>
+<p>Разделительная линия — сплошная или пунктирная?</p>
+</li>
+</ul>
+<p>Пройдите мастер, выбирая понравившийся стиль. Это займёт одну-две минуты. После завершения в конец <code>~/.zshrc</code> автоматически добавится:</p>
+<pre><code class="language-bash">[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh</code></pre>
+<p>Этот файл содержит ваши выборы. Его можно скопировать на другие серверы для одинакового оформления.</p>
+<p>По завершении мастера вы окажетесь в zsh с новой темой. Можете вернуться в bash:</p>
+<pre><code class="language-bash">exit</code></pre>
+<p>Чтобы снова войти в zsh (включая мастер, если захотите перебрать стиль), выполните:</p>
+<pre><code class="language-bash">p10k configure</code></pre>
+<p>Это займёт одну-две минуты — не больше, чем выбор обоев на рабочий стол, но результат будет с вами при каждом входе в терминал.</p>
+<blockquote>
+<p><em>Воланд удовлетворённо кивнул:</em><br />
+<em>«Вот теперь ваш терминал — не чёрный прямоугольник, а рабочий инструмент. Иконки, цвета, подсказки. Всё, чтобы глаз радовался... или хотя бы не страдал.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 6. Итоги</h2>
+<p>На данном этапе мы имеем:</p>
+<table>
+<thead>
+<tr>
+<th>Что</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uservpn</code> имеет <code>sudo</code> без пароля (временно)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>SSH-сгенерирован и скопирован</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Вход по ключу работает</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Вход по паролю отключён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>sudo</code> перепроверен через ключ</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>zsh установлен и оболочка по умолчанию</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>oh-my-zsh + powerlevel10k настроены</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Мастер p10k запущен, стиль выбран</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Плагины активны</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Конец документа. Подключившемуся — уютного терминала, забывшему ключ — да поможет <code>journalctl</code>.</em></p>
+
+                </section>
+            </section>
+                </section>
+
+    </div>
+
+            <section id="footer" class="section bg-gray">
+    <section class="container grid-lg">
+        <p><a href="https://getgrav.org">Grav</a> was <i class="fa fa-code"></i> with <i class="fa fa-heart-o pulse "></i> by <a href="https://trilby.media">Trilby Media</a>.</p>
+    </section>
+</section>
+    
+        <div class="mobile-container">
+        <div class="overlay" id="overlay">
+            <div class="mobile-logo">
+                <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>            </div>
+            <nav class="overlay-menu">
+                
+<ul class="tree">
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="active">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+            </nav>
+        </div>
+    </div>
+    
+    <script src="/user/themes/quark/js/jquery.treemenu.js"></script>
+<script src="/user/themes/quark/js/site.js"></script>
+
+
+</body>
+</html>

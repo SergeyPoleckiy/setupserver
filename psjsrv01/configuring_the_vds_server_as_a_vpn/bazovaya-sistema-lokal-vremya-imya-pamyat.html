@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Базовая система: локаль, время, имя, память | MyBlog</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="GravCMS" />
+    <meta name="description" content="Sergey Poleckiy&apos;s online blog" />
+
+    <link rel="icon" type="image/png" href="/user/themes/quark/images/favicon.png" />
+    <link rel="canonical" href="https://psj-notes.ru/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" />
+
+                        
+            
+    <link href="/user/plugins/markdown-notices/assets/notices.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/form/assets/form-styles.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/login/css/login.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/spectre.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/theme.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/custom.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/line-awesome.min.css" type="text/css" rel="stylesheet">
+
+    <script src="/system/assets/jquery/jquery-3.x.min.js"></script>
+
+</head>
+<body id="top" class=" header-fixed header-animated sticky-footer">
+    <div id="page-wrapper">
+            <section id="header" class="section">
+            <section class="container grid-lg">
+                <nav class="navbar">
+                    <section class="navbar-section logo">
+                        <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>                    </section>
+                    <section class="navbar-section desktop-menu">
+
+                        <nav class="dropmenu animated">
+                                                    
+<ul >
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="active">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+                                                </nav>
+
+                        
+                    </section>
+                </nav>
+            </section>
+        </section>
+        <div class="mobile-menu">
+            <div class="button_container" id="toggle">
+                <span class="top"></span>
+                <span class="middle"></span>
+                <span class="bottom"></span>
+            </div>
+        </div>
+    
+    
+        <section id="start">
+                    <section id="body-wrapper" class="section">
+                <section class="container grid-lg">
+                                            
+                                            <h1>Базовая система: локаль, время, имя, память</h1>
+<blockquote>
+<p><em>«Система без базовой настройки — это как человек без паспорта и часов. Вроде живёт, а кто он и когда — неизвестно. — Воланд»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство настраивает фундамент сервера, на который лягут все остальные сервисы. Мы начинаем с уже работающего SSH-сервера, к которому можем подключиться пользователем <code>uservpn</code> и имеем права <code>sudo</code> (пока — без пароля, как настроено в предыдущем руководстве).</p>
+<p>По сравнению с предыдущим документом сервер всё ещё «голый»: не установлена правильная локаль, часовой пояс, скорее всего, стандартный европейский, hostname — набор символов, выданных провайдером, а swap-файл отсутствует. На сервере с 1 ГБ оперативной памяти отсутствие swap — это как ходить по канату без страховки.</p>
+<p>Все шаги пронумерованы и должны выполняться <strong>в указанном порядке</strong>. Перескакивать не рекомендуется.</p>
+<blockquote>
+<p><strong>Входные данные:</strong> вы подключены к серверу по SSH пользователем <code>uservpn</code>. Команды с <code>sudo</code> не запрашивают пароль.</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Настройка локали</h2>
+<h3>1.1. Что такое локаль</h3>
+<p><strong>Локаль (locale)</strong> — набор параметров, определяющих язык, кодировку, форматирование дат, чисел и валют для программ в системе. Без правильно настроенной локали вы получите «кракозябры» в логах, некорректное отображение кириллицеских символов и проблемы с сортировкой текста.</p>
+<p>В Ubuntu по умолчанию часто установлена одна <code>en_US.UTF-8</code>. Мы добавим <code>ru_RU.UTF-8</code> и сделаем её основной — сервер-то наш русскоязычный.</p>
+<h3>1.2. Текущее состояние</h3>
+<p>Проверьте текущие настройки локали:</p>
+<pre><code class="language-bash">locale</code></pre>
+<p>Ожидаемый вывод на чистом сервере — всё значения <code>C</code> или <code>en_US.UTF-8</code>:</p>
+<pre><code>LANG=en_US.UTF-8
+LANGUAGE=
+LC_CTYPE="en_US.UTF-8"
+LC_NUMERIC="en_US.UTF-8"
+...
+LC_ALL=</code></pre>
+<p>Проверьте, какие локали уже сгенерированы:</p>
+<pre><code class="language-bash">locale -a</code></pre>
+<h3>1.3. Установка пакета локалей и генерация <code>ru_RU.UTF-8</code></h3>
+<p>Установите пакет локалей (если ещё не установлен) и сгенерируйте русскую локаль:</p>
+<pre><code class="language-bash">sudo apt install -y locales
+sudo locale-gen ru_RU.UTF-8</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>Generating locales (this might take a while)...
+  ru_RU.UTF-8... done
+Generation complete.</code></pre>
+<h3>1.4. Установка основной локали</h3>
+<p>Настройте <code>ru_RU.UTF-8</code> как системную локаль по умолчанию:</p>
+<pre><code class="language-bash">sudo update-locale LANG=ru_RU.UTF-8 LANGUAGE=ru_RU:ru LC_ALL=ru_RU.UTF-8</code></pre>
+<p>После этого примените изменения в текущей сессии:</p>
+<pre><code class="language-bash">export LANG=ru_RU.UTF-8
+export LANGUAGE=ru_RU:ru
+export LC_ALL=ru_RU.UTF-8</code></pre>
+<h3>1.5. Проверка</h3>
+<p>Проверьте результат:</p>
+<pre><code class="language-bash">locale</code></pre>
+<p>Ожидаемый вывод — все значения <code>ru_RU.UTF-8</code>:</p>
+<pre><code>LANG=ru_RU.UTF-8
+LANGUAGE=ru_RU:ru
+LC_CTYPE="ru_RU.UTF-8"
+LC_NUMERIC="ru_RU.UTF-8"
+LC_TIME="ru_RU.UTF-8"
+...
+LC_ALL=ru_RU.UTF-8</code></pre>
+<p>Также убедитесь, что локаль доступна в списке сгенерированных:</p>
+<pre><code class="language-bash">locale -a | grep ru_RU</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>ru_RU.utf8</code></pre>
+<blockquote>
+<p><em>Воланд удовлетворённо улыбнулся:</em><br />
+<em>«Теперь сервер понимает, на каком языке с ним говорят. Раньше он был как иностранец, не знающий ни одного наречия. Теперь — он наш. Русский, грамотный, с правильной кодировкой. И дата будет отображаться так, как привыкли мы, а не какой-нибудь техасец.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 2. Часовой пояс</h2>
+<h3>2.1. Что такое часовой пояс, <code>timedatectl</code> и NTP</h3>
+<p><strong>Часовой пояс (timezone)</strong> — правило, определяющее сдвиг местного времени относительно UTC. Серверы провайдеров часто по умолчанию стоят в <code>UTC</code> или <code>Europe/London</code>. Это неудобно: логи, cron-задачи, время создания файлов — всё будет показывать «не наше» время.</p>
+<p><strong>NTP (Network Time Protocol)</strong> — протокол синхронизации системных часов с серверами точного времени. Без NTP часы сервера постепенно «уплывают» — на несколько миллисекунд в сутки, но за год это накапливается до минут. Расхождение во времени ломает аутентификацию TLS, проверку сертификатов, журналы событий и работу VPN-туннелей.</p>
+<p>Утилита <strong><code>timedatectl</code></strong> — часть systemd — управляет системным временем, часовым поясом и синхронизацией NTP. В Ubuntu 24.04 служба <code>systemd-timesyncd</code> <strong>уже включена по умолчанию</strong> и автоматически синхронизирует часы с серверами NTP Canonical. Настраивать NTP вручную (устанавливать <code>chrony</code> или <code>ntp</code>) на нашем сервере <strong>не нужно</strong>. В этом можно убедиться:</p>
+<pre><code class="language-bash">timedatectl show --property=NTPSynchronized --value</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>yes</code></pre>
+<p>Если вы видите <code>yes</code> — время уже синхронизируется. Если <code>no</code> — запустите службу:</p>
+<pre><code class="language-bash">sudo systemctl enable --now systemd-timesyncd</code></pre>
+<p>После этого проверьте статус:</p>
+<pre><code class="language-bash">timedatectl status</code></pre>
+<p>В строке <code>System clock synchronized:</code> должно быть <code>yes:</code>.</p>
+<h3>2.2. Проверка текущего часового пояса</h3>
+<pre><code class="language-bash">timedatectl</code></pre>
+<p>Ожидаемый вывод (фрагмент):</p>
+<pre><code>               Local time: Вт 2025-04-29 10:00:00 UTC
+           Universal time: Вт 2025-04-29 10:00:00 UTC
+                 Time zone: UTC (UTC, +0000)</code></pre>
+<p>Если в строке <code>Time zone</code> написано <code>UTC</code> или что-то отличное от <code>Europe/Moscow</code> — меняем.</p>
+<h3>2.3. Установка часового пояса</h3>
+<pre><code class="language-bash">sudo timedatectl set-timezone Europe/Moscow</code></pre>
+<h3>2.4. Проверка</h3>
+<pre><code class="language-bash">timedatectl</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>               Local time: Вт 2025-04-29 13:00:00 MSK
+           Universal time: Вт 2025-04-29 10:00:00 UTC
+                 Time zone: Europe/Moscow (MSK, +0300)</code></pre>
+<p>Обратите внимание: местное время теперь на 3 часа впереди UTC. <code>MSK</code> — московское стандартное время.</p>
+<blockquote>
+<p><em>Коровьев прищурился на часы:</em><br />
+<em>«Время — вещь удивительная. В Амстердаме полдень, а у нас уже три часа дня. Но серверу, видите ли, всё равно — он работает и в UTC, и в MSK. Мы ставим время не ради сервера, а для нашего удобства: чтобы логи показывали, когда именно Анна зашла на сервер, а не когда солнце в Лондоне было в зените.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 3. Hostname</h2>
+<h3>3.1. Что такое hostname и зачем его менять</h3>
+<p><strong>Hostname</strong> — имя компьютера в сети. Провайдеры обычно присваивают серверам имена вроде <code>vps-12345</code> или <code>server-abc</code>, что ни о чём не говорит. Мы хотим осмысленное имя — <code>psjsrv01</code>, чтобы при входе в терминал сразу было понятно, на каком сервере вы находитесь, а не гадать по IP-адресу.</p>
+<h3>3.2. Текущее состояние</h3>
+<p>Проверьте текущее имя:</p>
+<pre><code class="language-bash">hostnamectl</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code> Static hostname: vps-12345
+       Icon name: computer-vm
+         Chassis: vm
+      Machine ID: ...
+         Boot ID: ...
+  Virtualization: kvm
+Operating System: Ubuntu 24.04 LTS
+          Kernel: Linux 6.8.0-xx-generic
+    Architecture: x86-64</code></pre>
+<h3>3.3. Установка hostname</h3>
+<pre><code class="language-bash">sudo hostnamectl set-hostname psjsrv01</code></pre>
+<h3>3.4. Обновление <code>/etc/hosts</code></h3>
+<p>Файл <code>/etc/hosts</code> связывает IP-адреса с именами. После смены hostname нужно обновить его, чтобы система могла корректно резолвить собственное имя.</p>
+<p>Откройте текущую версию:</p>
+<pre><code class="language-bash">cat /etc/hosts</code></pre>
+<p>Пример содержимого:</p>
+<pre><code>127.0.0.1    localhost
+127.0.1.1    vps-12345
+::1          localhost ip6-localhost ip6-loopback</code></pre>
+<p>Измените строку <code>127.0.1.1</code>, заменив старое hostname на <code>psjsrv01</code>. Выполните:</p>
+<pre><code class="language-bash">sudo sed -i 's/127\.0\.1\.1.*/127.0.1.1\tpsjsrv01/' /etc/hosts</code></pre>
+<p>Проверьте результат:</p>
+<pre><code class="language-bash">cat /etc/hosts</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>127.0.0.1    localhost
+127.0.1.1    psjsrv01
+::1          localhost ip6-localhost ip6-loopback</code></pre>
+<h3>3.5. Проверка</h3>
+<p>Проверьте новое имя:</p>
+<pre><code class="language-bash">hostnamectl</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code> Static hostname: psjsrv01</code></pre>
+<blockquote>
+<p><em>Воланд задумчиво кивнул:</em><br />
+<em>«Теперь у сервера есть имя. Не какое-то "vps-12345", а настоящее — psjsrv01. Знаете, это важно — знать, как зовут того, кому вы поручаете свои тайны. Бездомные, кстати, тоже сначала дают кличку, а потом уже доверяют.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 4. Swap-файл</h2>
+<h3>4.1. Что такое swap и почему он нужен</h3>
+<p><strong>Swap (файл подкачки)</strong> — область на диске, которую ядро Linux использует как «дополнительную оперативную память». Когда RAM заполняется, ядро перемещает наименее активные страницы памяти на диск, освобождая место для текущих задач.</p>
+<p>На сервере с 1 ГБ RAM swap <strong>обязателен</strong>. Без него при заполнении памяти срабатывает OOM-killer (Out Of Memory killer) — механизм, который без разбора убивает процессы, потребляющие больше всего памяти. И он часто выбирает самый «жирный» процесс — вашу CMS или VPN.</p>
+<p>Мы используем swap-файл, а не swap-раздел. Файл гибче: его можно создать, изменить размер или удалить без переразметки диска.</p>
+<h3>4.2. Создание swap-файла на 2 ГБ</h3>
+<p>Создайте файл нужного размера командой <code>fallocate</code>:</p>
+<pre><code class="language-bash">sudo fallocate -l 2G /swapfile</code></pre>
+<p>Проверьте, что файл создан:</p>
+<pre><code class="language-bash">ls -lh /swapfile</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>-rw-r--r-- 1 root root 2.0G ... /swapfile</code></pre>
+<h3>4.3. Установка правильных разрешений</h3>
+<p>Swap-файл должен быть доступен только <code>root</code>. Иначе любой пользователь сможет прочитать его содержимое и, теоретически, извлечь чувствительные данные из памяти.</p>
+<pre><code class="language-bash">sudo chmod 600 /swapfile</code></pre>
+<p>Проверьте:</p>
+<pre><code class="language-bash">ls -lh /swapfile</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>-rw------- 1 root root 2.0G ... /swapfile</code></pre>
+<h3>4.4. Форматирование и активация</h3>
+<p>Разметьте файл как swap-область:</p>
+<pre><code class="language-bash">sudo mkswap /swapfile</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>Setting up swapspace version 1, size = 2 GiB (2147479552 bytes)
+no label, UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></pre>
+<p>Активируйте swap:</p>
+<pre><code class="language-bash">sudo swapon /swapfile</code></pre>
+<p>Проверьте, что swap активен:</p>
+<pre><code class="language-bash">sudo swapon --show</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>NAME      TYPE  SIZE USED PRIO
+/swapfile file   2G   0B   -2</code></pre>
+<p>Также проверьте через <code>free</code>:</p>
+<pre><code class="language-bash">free -h</code></pre>
+<p>В строке <code>Swap:</code> должны отображаться <code>2.0G</code> в колонке <code>total</code>.</p>
+<h3>4.5. Добавление в <code>/etc/fstab</code> для автоматического монтирования</h3>
+<p>Swap, активированный командой <code>swapon</code>, пропадёт после перезагрузки. Чтобы этого не произошло, добавьте запись в <code>/etc/fstab</code>:</p>
+<pre><code class="language-bash">echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</code></pre>
+<p>Проверьте, что запись добавлена:</p>
+<pre><code class="language-bash">tail -1 /etc/fstab</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>/swapfile none swap sw 0 0</code></pre>
+<h3>4.6. Настройка <code>vm.swappiness</code></h3>
+<p><strong><code>vm.swappiness</code></strong> — параметр ядра, определяющий, насколько активно система будет использовать swap. Диапазон: от 0 до 100.</p>
+<table>
+<thead>
+<tr>
+<th>Значение</th>
+<th>Поведение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Swap используется только при критической нехватке памяти</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td>Система предпочитает RAM, но при необходимости сбрасывает фоновые данные</td>
+</tr>
+<tr>
+<td><code>60</code></td>
+<td>Значение по умолчанию в Ubuntu — умеренно активное использование swap</td>
+</tr>
+<tr>
+<td><code>100</code></td>
+<td>Агрессивный swap — всё, что можно, уходит на диск</td>
+</tr>
+</tbody>
+</table>
+<p>Зачем менять значение по умолчанию? На сервере с 1 ГБ RAM и 2 ГБ swap значение <code>60</code> означает, что ядро начнёт активно сбрасывать данные на диск <strong>слишком рано</strong>. Это приведёт к тому, что даже при наличии свободной памяти часть данных окажется на медленном диске, и производительность упадёт. Значение <code>10</code> скажет ядру: «Используй RAM по максимуму, а swap — только когда совсем прижмёт». Для сервера с малым объёмом памяти это оптимальный баланс.</p>
+<p>Установите значение:</p>
+<pre><code class="language-bash">sudo sysctl vm.swappiness=10</code></pre>
+<p>Проверьте:</p>
+<pre><code class="language-bash">sysctl vm.swappiness</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>vm.swappiness = 10</code></pre>
+<p>Для сохранения параметра после перезагрузки создайте конфигурационный файл:</p>
+<pre><code class="language-bash">echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-swappiness.conf</code></pre>
+<p>Проверьте:</p>
+<pre><code class="language-bash">cat /etc/sysctl.d/99-swappiness.conf</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>vm.swappiness=10</code></pre>
+<blockquote>
+<p><em>Воланд предупреждает:</em><br />
+<em>«Swap — это не замена оперативной памяти. Это последняя линия обороны. Если ваш сервер постоянно работает с заполненным swap — это как дышать через трубочку: жив, но качество жизни… нет, вам нужен сервер с большей RAM.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 5. Обновление пакетов системы</h2>
+<h3>5.1. Зачем обновлять</h3>
+<p>После развёртывания сервера от провайдера образ может быть не первой свежести: в нём содержатся устаревшие пакеты, включая потенциальные уязвимости безопасности. Перед установкой любого ПО — обновляемся.</p>
+<h3>5.2. Обновление списков пакетов</h3>
+<pre><code class="language-bash">sudo apt update</code></pre>
+<p>Ожидаемый вывод (фрагмент):</p>
+<pre><code>Hit:1 http://archive.ubuntu.com/ubuntu noble InRelease
+Get:2 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+...
+All packages are up to date.</code></pre>
+<h3>5.3. Обновление установленных пакетов</h3>
+<pre><code class="language-bash">sudo apt upgrade -y</code></pre>
+<p>Флаг <code>-y</code> подтверждает установку обновлений автоматически. Процесс может занять несколько минут, в зависимости от количества пакетов.</p>
+<h3>5.4. Очистка</h3>
+<p>После обновления удалите загруженные архивные файлы пакетов — они занимают место на диске, а на сервере с 60 ГБ каждый мегабайт на счету:</p>
+<pre><code class="language-bash">sudo apt autoremove -y &amp;&amp; sudo apt autoclean</code></pre>
+<p>Ожидаемый результат — сообщение о количестве освобождённого места или <code>Пакеты не требуют обновления</code>.</p>
+<blockquote>
+<p><em>Воланд, просматривая список обновлённых пакетов:</em><br />
+<em>«Сорок семь обновлений. Сорок семь дыр, которые кто-то уже закрыл, пока вы читали это руководство. Сервер — как квартира: чем дольше не закрываете замки, тем больше желающих зайти без приглашения.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 6. Итоги</h2>
+<p>На данном этапе мы имеем:</p>
+<table>
+<thead>
+<tr>
+<th>Что</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Локаль <code>ru_RU.UTF-8</code> установлена</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Часовой пояс <code>Europe/Moscow</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Hostname <code>psjsrv01</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Swap-файл 2 ГБ активен</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>vm.swappiness = 10</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Системные пакеты обновлены</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Приложение А: сводная проверка</h2>
+<p>Одной командой — проверка всех параметров:</p>
+<pre><code class="language-bash">echo "=== Hostname ===" &amp;&amp; hostnamectl --static &amp;&amp; \
+echo "=== Часовой пояс ===" &amp;&amp; timedatectl show --property=Timezone --value &amp;&amp; \
+echo "=== Локаль ===" &amp;&amp; locale | head -1 &amp;&amp; \
+echo "=== Swap ===" &amp;&amp; swapon --show --noheadings &amp;&amp; \
+echo "=== Swappiness ===" &amp;&amp; sysctl -n vm.swappiness</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>=== Hostname ===
+psjsrv01
+=== Часовой пояс ===
+Europe/Moscow
+=== Локаль ===
+LANG=ru_RU.UTF-8
+=== Swap ===
+/swapfile  file  2G  ...
+=== Swappiness ===
+10</code></pre>
+<hr />
+<blockquote>
+<p><strong>Следующее руководство:</strong> настройка фаервола UFW.</p>
+</blockquote>
+<hr />
+<p><em>Конец документа. Настроившему — порядок, забывшему swap — сюрприз от OOM-killer, пропустившему <code>apt update</code> — уязвимости из 2024 года.</em></p>
+
+                </section>
+            </section>
+                </section>
+
+    </div>
+
+            <section id="footer" class="section bg-gray">
+    <section class="container grid-lg">
+        <p><a href="https://getgrav.org">Grav</a> was <i class="fa fa-code"></i> with <i class="fa fa-heart-o pulse "></i> by <a href="https://trilby.media">Trilby Media</a>.</p>
+    </section>
+</section>
+    
+        <div class="mobile-container">
+        <div class="overlay" id="overlay">
+            <div class="mobile-logo">
+                <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>            </div>
+            <nav class="overlay-menu">
+                
+<ul class="tree">
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="active">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+            </nav>
+        </div>
+    </div>
+    
+    <script src="/user/themes/quark/js/jquery.treemenu.js"></script>
+<script src="/user/themes/quark/js/site.js"></script>
+
+
+</body>
+</html>

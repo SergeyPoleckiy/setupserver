@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>UFW: настройка фаервола | MyBlog</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="GravCMS" />
+    <meta name="description" content="Sergey Poleckiy&apos;s online blog" />
+
+    <link rel="icon" type="image/png" href="/user/themes/quark/images/favicon.png" />
+    <link rel="canonical" href="https://psj-notes.ru/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" />
+
+                        
+            
+    <link href="/user/plugins/markdown-notices/assets/notices.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/form/assets/form-styles.css" type="text/css" rel="stylesheet">
+<link href="/user/plugins/login/css/login.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/spectre.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css-compiled/theme.min.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/custom.css" type="text/css" rel="stylesheet">
+<link href="/user/themes/quark/css/line-awesome.min.css" type="text/css" rel="stylesheet">
+
+    <script src="/system/assets/jquery/jquery-3.x.min.js"></script>
+
+</head>
+<body id="top" class=" header-fixed header-animated sticky-footer">
+    <div id="page-wrapper">
+            <section id="header" class="section">
+            <section class="container grid-lg">
+                <nav class="navbar">
+                    <section class="navbar-section logo">
+                        <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>                    </section>
+                    <section class="navbar-section desktop-menu">
+
+                        <nav class="dropmenu animated">
+                                                    
+<ul >
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="active">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+                                                </nav>
+
+                        
+                    </section>
+                </nav>
+            </section>
+        </section>
+        <div class="mobile-menu">
+            <div class="button_container" id="toggle">
+                <span class="top"></span>
+                <span class="middle"></span>
+                <span class="bottom"></span>
+            </div>
+        </div>
+    
+    
+        <section id="start">
+                    <section id="body-wrapper" class="section">
+                <section class="container grid-lg">
+                                            
+                                            <h1>UFW: настройка фаервола</h1>
+<blockquote>
+<p><em>«Запереть дверь — ещё не значит обезопасить дом. Но оставить её открытой — значит, гарантированно потерять всё, что внутри. — Воланд»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство описывает установку и настройку фаервола <strong>UFW</strong> (Uncomplicated Firewall) — фронтенда к iptables/nftables, который является стандартным средством защиты сетевого периметра в Ubuntu.</p>
+<p>Мы начинаем с сервера, на котором уже выполнены предыдущие шаги: SSH работает (порт 22022, только ключи), пользователь <code>uservpn</code> имеет <code>sudo</code> без пароля, базовая система настроена (локаль, часовой пояс, hostname, swap).</p>
+<p><strong>Цель данного руководства</strong> — закрыть все входящие сетевые порты, кроме тех, которые действительно нужны, и настроить rate limiting для SSH.</p>
+<p>Все шаги пронумерованы и должны выполняться <strong>в указанном порядке</strong>. Перескакивать не рекомендуется.</p>
+<blockquote>
+<p><strong>Входные данные:</strong> вы подключены к серверу по SSH пользователем <code>uservpn</code> на порт 22022. Команды с <code>sudo</code> не запрашивают пароль.</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Что такое фаервол и зачем он нужен</h2>
+<h3>1.1. Краткая теория</h3>
+<p><strong>Фаервол (брандмауэр, межсетевой экран)</strong> — компонент операционной системы, который фильтрует сетевой трафик по заданным правилам. Он решает, какие пакеты пропустить, какие заблокировать, а какие ограничить по частоте.</p>
+<p>Без фаервола все порты сервера открыты для всего интернета. Любой сканер, ботнет или любопытный прохожий может попытаться подключиться к любому сервису. Это как оставить входную дверь квартиры открытой и надеяться, что никто не войдёт.</p>
+<h3>1.2. Почему UFW</h3>
+<p>В Linux существует несколько уровней фильтрации:</p>
+<table>
+<thead>
+<tr>
+<th>Уровень</th>
+<th>Инструмент</th>
+<th>Сложность</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ядро (netfilter)</td>
+<td>iptables / nftables</td>
+<td>Высокая — десятки параметров в одной команде</td>
+</tr>
+<tr>
+<td>Обёртка</td>
+<td><strong>UFW</strong></td>
+<td>Низкая — понятные команды вида <code>ufw allow 22/tcp</code></td>
+</tr>
+<tr>
+<td>Обёртка над UFW</td>
+<td>firewalld</td>
+<td>Средняя — зоны, сервисы, динамические правила</td>
+</tr>
+</tbody>
+</table>
+<p>UFW — выбор по умолчанию для Ubuntu. Он не заменяет iptables, а упрощает работу с ним: за каждой командой <code>ufw</code> стоит набор правил iptables/nftables, которые UFW генерирует автоматически.</p>
+<h3>1.3. Какие порты должны быть открыты</h3>
+<p>На нашем сервере работают следующие сервисы, требующие сетевого доступа:</p>
+<table>
+<thead>
+<tr>
+<th>Порт</th>
+<th>Протокол</th>
+<th>Правило</th>
+<th>Сервис</th>
+<th>Назначение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>22022</td>
+<td>TCP</td>
+<td>LIMIT</td>
+<td>SSH</td>
+<td>Удалённый доступ (rate limit — защита от брутфорса)</td>
+</tr>
+<tr>
+<td>80</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>Nginx</td>
+<td>HTTP — Let's Encrypt validation + редирект на HTTPS</td>
+</tr>
+<tr>
+<td>443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>Xray (VLESS + Reality)</td>
+<td>VPN-туннель, маскируется под обычный HTTPS</td>
+</tr>
+<tr>
+<td>8443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>Nginx (Grav CMS)</td>
+<td>Блог на <code>psj-notes.ru</code></td>
+</tr>
+<tr>
+<td>4443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>Nginx (x-ui dashboard)</td>
+<td>Панель управления VPN (Basic Auth)</td>
+</tr>
+<tr>
+<td>2096</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>VLESS-Reality</td>
+<td>Альтернативный порт VPN (резерв)</td>
+</tr>
+</tbody>
+</table>
+<p>Все остальные входящие соединения — <strong>заблокированы</strong>. Исходящие — <strong>разрешены</strong> без ограничений (сервер должен иметь возможность скачивать обновления, отправлять почту и т.д.).</p>
+<blockquote>
+<p><em>Коровьев, разглядывая таблицу портов:</em><br />
+<em>«Шесть открытых дверей из сотен возможных. Остальные — наглухо заперты. И заметьте, гражданин: даже в этих шести есть засовы, цепочки и глазок. Квартирный вопрос, как известно, испортил не только москвичей, но и всех, кто пытается зайти на сервер без приглашения.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 2. Установка UFW</h2>
+<h3>2.1. Проверка наличия</h3>
+<p>В некоторых образах Ubuntu UFW уже установлен. Проверим:</p>
+<pre><code class="language-bash">sudo ufw version</code></pre>
+<p>Если команда выводит версию (например, <code>ufw 0.36.2</code>) — пакет установлен. Если видите <code>command not found</code> — устанавливаем.</p>
+<h3>2.2. Установка</h3>
+<pre><code class="language-bash">sudo apt install -y ufw</code></pre>
+<p>После установки проверьте, что UFW доступен:</p>
+<pre><code class="language-bash">sudo ufw status</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>Status: inactive</code></pre>
+<blockquote>
+<p><strong>Важно:</strong> UFW <strong>не активен</strong> после установки. Это правильно — сначала настраиваем правила, потом включаем. Если включить фаервол без правил — он заблокирует всё, включая текущую SSH-сессию.</p>
+</blockquote>
+<hr />
+<h2>Раздел 3. Настройка политик по умолчанию</h2>
+<h3>3.1. Что такое политики по умолчанию</h3>
+<p>Политика по умолчанию (default policy) — правило, которое применяется к пакетам, не подошедшим ни под одно конкретное правило. UFW поддерживает две политики:</p>
+<table>
+<thead>
+<tr>
+<th>Политика</th>
+<th>Поведение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow</code></td>
+<td>Пропускать всё, что не запрещено явно</td>
+</tr>
+<tr>
+<td><code>deny</code></td>
+<td>Блокировать всё, что не разрешено явно</td>
+</tr>
+</tbody>
+</table>
+<p>Для сервера единственно правильный выбор — <strong>deny для входящих, allow для исходящих</strong>. Это называется «белый список»: разрешено только то, что мы явно указали.</p>
+<h3>3.2. Установка политик</h3>
+<pre><code class="language-bash">sudo ufw default deny incoming
+sudo ufw default allow outgoing</code></pre>
+<p>Ожидаемый вывод каждой команды:</p>
+<pre><code>Default incoming policy changed to 'deny'
+(be sure to update your rules accordingly)</code></pre>
+<h3>3.3. Проверка</h3>
+<pre><code class="language-bash">sudo ufw status verbose</code></pre>
+<p>Ожидаемый вывод (пока без правил):</p>
+<pre><code>Status: inactive
+Default: deny (incoming), allow (outgoing), deny (routed)</code></pre>
+<blockquote>
+<p><em>Воланд кивнул:</em><br />
+<em>«Теперь сервер по умолчанию глух и нем для внешнего мира. Всё, что мы разрешим — будет сделано осознанно. Это называется принцип наименьших привилегий, и он спас больше систем, чем все антивирусы вместе взятые.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 4. Настройка логирования</h2>
+<h3>4.1. Зачем логировать</h3>
+<p>UFW может записывать в системный журнал информацию о заблокированных пакетах. Это полезно для диагностики: если что-то не работает, можно посмотреть, не блокирует ли фаервол нужный трафик.</p>
+<h3>4.2. Установка уровня логирования</h3>
+<pre><code class="language-bash">sudo ufw logging low</code></pre>
+<p>Уровни логирования:</p>
+<table>
+<thead>
+<tr>
+<th>Уровень</th>
+<th>Что записывает</th>
+<th>Когда использовать</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>off</code></td>
+<td>Не записывает ничего</td>
+<td>Никогда — вы останетесь слепыми</td>
+</tr>
+<tr>
+<td><code>low</code></td>
+<td>Только заблокированные пакеты</td>
+<td><strong>Рекомендуется</strong> для продакшена</td>
+</tr>
+<tr>
+<td><code>medium</code></td>
+<td>Заблокированные + разрешённые + rate limit</td>
+<td>Для отладки</td>
+</tr>
+<tr>
+<td><code>high</code></td>
+<td>medium + дополнительная информация</td>
+<td>Для глубокой диагностики</td>
+</tr>
+<tr>
+<td><code>full</code></td>
+<td>Всё, включая фрагментированные пакеты</td>
+<td>Только при расследовании инцидентов</td>
+</tr>
+</tbody>
+</table>
+<p>Уровень <code>low</code> оптимален: он записывает только заблокированные соединения, не перегружая диск логами.</p>
+<hr />
+<h2>Раздел 5. Добавление правил</h2>
+<h3>5.1. Правило 1: SSH (порт 22022) с rate limiting</h3>
+<pre><code class="language-bash">sudo ufw limit 22022/tcp</code></pre>
+<p><strong>Что делает <code>limit</code>:</strong> разрешает подключения, но блокирует IP-адрес, если с него поступает более 6 новых соединений за 30 секунд. Это защита от брутфорса на уровне фаервола — дополнительный рубеж после Fail2ban.</p>
+<blockquote>
+<p><strong>Почему не <code>allow</code>:</strong> <code>allow</code> пропускает всё без ограничений. <code>limit</code> — пропускает, но с защитой от флуда. Для SSH это критично, даже если порт изменён и вход только по ключам.</p>
+</blockquote>
+<h3>5.2. Правило 2: HTTP (порт 80)</h3>
+<pre><code class="language-bash">sudo ufw allow 80/tcp</code></pre>
+<p>Порт 80 нужен для двух вещей:</p>
+<ol>
+<li><strong>Let's Encrypt validation</strong> — Certbot ставит challenge-файлы в <code>.well-known/acme-challenge/</code> и проверяет их доступность по HTTP. Без открытого 80-го порта продление сертификатов не работает.</li>
+<li><strong>Редирект на HTTPS</strong> — Nginx принимает HTTP-запросы и перенаправляет их на HTTPS. Пользователь вводит <code>http://psj-notes.ru</code> — получает <code>https://psj-notes.ru</code>.</li>
+</ol>
+<h3>5.3. Правило 3: VLESS + Reality (порт 443)</h3>
+<pre><code class="language-bash">sudo ufw allow 443/tcp</code></pre>
+<p>Порт 443 — стандартный HTTPS. На нашем сервере его слушает <strong>Xray</strong> с протоколом VLESS + Reality. Для внешнего наблюдателя это выглядит как обычный HTTPS-сайт: трафик шифруется, SNI указывает на <code>psj-notes.ru</code>. Только клиент с правильным конфигурационным файлом получит доступ к VPN-туннелю.</p>
+<h3>5.4. Правило 4: Grav CMS (порт 8443)</h3>
+<pre><code class="language-bash">sudo ufw allow 8443/tcp</code></pre>
+<p>Порт 8443 — HTTPS-виртуальный хост Nginx для блога Grav CMS. Доступен по адресу <code>https://psj-notes.ru:8443</code>.</p>
+<h3>5.5. Правило 5: Панель управления (порт 4443)</h3>
+<pre><code class="language-bash">sudo ufw allow 4443/tcp</code></pre>
+<p>Порт 4443 — HTTPS-виртуальный хост Nginx для дашборда и панели x-ui. Защищён Basic Auth (логин + пароль). Доступен по адресу <code>https://consol.psj-notes.ru:4443</code>.</p>
+<h3>5.6. Правило 6: VLESS-Reality резерв (порт 2096)</h3>
+<pre><code class="language-bash">sudo ufw allow 2096/tcp comment 'VLESS-Reality'</code></pre>
+<p>Порт 2096 — альтернативный порт для VPN-подключений. Полезен, если основной порт 443 по какой-то причине недоступен или занят другим сервисом.</p>
+<blockquote>
+<p><em>Коровьев, подсчитывая правила на пальцах:</em><br />
+<em>«Шесть правил — шесть дверей. Каждая с замком, каждая с охраной. И ни одной лишней. Заметьте: мы не открыли ни порта для базы данных, ни для FTP, ни для чего-нибудь экзотического. Если серверу это не нужно — дверь остаётся запертой.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 6. Включение фаервола</h2>
+<h3>6.1. Предварительная проверка</h3>
+<p>Перед включением убедитесь, что правило для SSH (порт 22022) добавлено:</p>
+<pre><code class="language-bash">sudo ufw status</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>Status: inactive
+
+To                         Action      From
+--                         ------      ----
+22022/tcp                  LIMIT       Anywhere
+80/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
+8443/tcp                   ALLOW       Anywhere
+4443/tcp                   ALLOW       Anywhere
+2096/tcp                   ALLOW       Anywhere</code></pre>
+<blockquote>
+<p><strong>Критично:</strong> если в списке <strong>нет</strong> правила для порта 22022 — <strong>не включайте</strong> фаервол. Вы потеряете SSH-доступ. Вернитесь к разделу 5.1 и добавьте правило.</p>
+</blockquote>
+<h3>6.2. Включение</h3>
+<pre><code class="language-bash">sudo ufw --force enable</code></pre>
+<p>Флаг <code>--force</code> подашивает предупреждение о возможном разрыве SSH-соединения. Поскольку мы уже добавили правило для SSH, предупреждение нам не нужно.</p>
+<p>Ожидаемый вывод:</p>
+<pre><code>Firewall is active and enabled on system startup</code></pre>
+<h3>6.3. Проверка</h3>
+<pre><code class="language-bash">sudo ufw status verbose</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22022/tcp                  LIMIT IN    Anywhere
+80/tcp                     ALLOW IN    Anywhere
+443/tcp                    ALLOW IN    Anywhere
+8443/tcp                   ALLOW IN    Anywhere
+4443/tcp                   ALLOW IN    Anywhere
+2096/tcp                   ALLOW IN    Anywhere
+22022/tcp (v6)             LIMIT IN    Anywhere (v6)
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+8443/tcp (v6)              ALLOW IN    Anywhere (v6)
+4443/tcp (v6)              ALLOW IN    Anywhere (v6)
+2096/tcp (v6)              ALLOW IN    Anywhere (v6)</code></pre>
+<p>Обратите внимание: UFW автоматически создал правила и для IPv6 (строки с <code>v6</code>). Это правильно — если IPv6 включён, фаервол должен защищать оба стека.</p>
+<hr />
+<h2>Раздел 7. Проверка работы</h2>
+<h3>7.1. Не закрывайте текущую SSH-сессию</h3>
+<p>После включения фаервола <strong>не закрывайте</strong> текущее SSH-подключение. Откройте <strong>новый</strong> терминал и попробуйте подключиться:</p>
+<pre><code class="language-bash">ssh -p 22022 uservpn@&lt;IP-АДРЕС-СЕРВЕРА&gt;</code></pre>
+<p>Если подключились — фаервол не блокирует SSH. Если нет — вернитесь в старую сессию и проверьте правила.</p>
+<h3>7.2. Проверка заблокированных соединений</h3>
+<p>Попробуйте подключиться к порту, который <strong>не</strong> открыт (например, 3306 — MySQL):</p>
+<pre><code class="language-bash">nc -zv &lt;IP-АДРЕС-СЕРВЕРА&gt; 3306</code></pre>
+<p>Ожидаемый результат:</p>
+<pre><code>nc: connect to &lt;IP-АДРЕС-СЕРВЕРА&gt; port 3306 (tcp) failed: Connection refused</code></pre>
+<p>Или таймаут — это означает, что фаервол блокирует соединение.</p>
+<h3>7.3. Просмотр логов UFW</h3>
+<p>Заблокированные попытки подключений записываются в системный журнал:</p>
+<pre><code class="language-bash">sudo dmesg | grep -i 'UFW BLOCK' | tail -5</code></pre>
+<p>Или через journalctl:</p>
+<pre><code class="language-bash">sudo journalctl -k | grep 'UFW BLOCK' | tail -5</code></pre>
+<p>Пример записи:</p>
+<pre><code>[UFW BLOCK] IN=eth0 OUT= MAC=... SRC=1.2.3.4 DST=194.50.94.224 ... DPT=3306 ...</code></pre>
+<p>Здесь <code>SRC</code> — IP-адрес источника (сканера), <code>DPT</code> — порт, к которому он пытался подключиться.</p>
+<blockquote>
+<p><em>Воланд, просматривая логи:</em><br />
+<em>«Вот видите — уже кто-то стучится в порт 3306. А MySQL у нас даже не установлен. Фаервол вежливо ответил: „Нет, сударь, здесь такого нет." И записал в журнал — для потомков. Через неделю таких записей будет тысячи. Это нормально. Интернет — место шумное.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 8. Управление правилами</h2>
+<h3>8.1. Просмотр правил с номерами</h3>
+<pre><code class="language-bash">sudo ufw status numbered</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22022/tcp                  LIMIT IN    Anywhere
+[ 2] 80/tcp                     ALLOW IN    Anywhere
+[ 3] 443/tcp                    ALLOW IN    Anywhere
+[ 4] 8443/tcp                   ALLOW IN    Anywhere
+[ 5] 4443/tcp                   ALLOW IN    Anywhere
+[ 6] 2096/tcp                   ALLOW IN    Anywhere</code></pre>
+<p>Номера правил нужны для удаления.</p>
+<h3>8.2. Удаление правила</h3>
+<p>Чтобы удалить правило, укажите его номер:</p>
+<pre><code class="language-bash">sudo ufw delete &lt;номер&gt;</code></pre>
+<p>Например, удалить правило 6 (порт 2096):</p>
+<pre><code class="language-bash">sudo ufw delete 6</code></pre>
+<p>Система спросит подтверждение:</p>
+<pre><code>Deleting:
+  allow 2096/tcp comment 'VLESS-Reality'
+Proceed with operation (y|n)? y</code></pre>
+<h3>8.3. Удаление правила по описанию</h3>
+<p>Альтернативный способ — указать правило текстом:</p>
+<pre><code class="language-bash">sudo ufw delete allow 2096/tcp</code></pre>
+<h3>8.4. Сброс всех правил</h3>
+<p>Если нужно начать заново:</p>
+<pre><code class="language-bash">sudo ufw reset</code></pre>
+<p>Это удалит <strong>все</strong> пользовательские правила и вернёт политики по умолчанию. Фаервол останется включённым.</p>
+<blockquote>
+<p><strong>Предупреждение:</strong> после <code>reset</code> правило для SSH будет удалено. Перед повторным включением добавьте его заново.</p>
+</blockquote>
+<hr />
+<h2>Раздел 9. Сводная таблица правил</h2>
+<table>
+<thead>
+<tr>
+<th>№</th>
+<th>Порт</th>
+<th>Протокол</th>
+<th>Правило</th>
+<th>Назначение</th>
+<th>Комментарий</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>22022</td>
+<td>TCP</td>
+<td>LIMIT</td>
+<td>SSH</td>
+<td>Rate limit — макс. 6 соединений за 30 сек</td>
+</tr>
+<tr>
+<td>2</td>
+<td>80</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>HTTP</td>
+<td>Let's Encrypt + редирект на HTTPS</td>
+</tr>
+<tr>
+<td>3</td>
+<td>443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>VLESS + Reality</td>
+<td>VPN-туннель (Xray)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>8443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>Grav CMS</td>
+<td>Блог на <code>psj-notes.ru</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>4443</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>x-ui dashboard</td>
+<td>Панель управления (Basic Auth)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>2096</td>
+<td>TCP</td>
+<td>ALLOW</td>
+<td>VLESS-Reality</td>
+<td>Резервный порт VPN</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Политики по умолчанию:</strong> входящие — <code>deny</code>, исходящие — <code>allow</code>.</p>
+<p><strong>Логирование:</strong> <code>low</code> (только заблокированные пакеты).</p>
+<hr />
+<h2>Раздел 10. Итоги</h2>
+<p>На данном этапе мы имеем:</p>
+<table>
+<thead>
+<tr>
+<th>Что</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UFW установлен</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Политика по умолчанию: deny incoming</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Политика по умолчанию: allow outgoing</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Логирование: low</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>SSH (22022) — rate limit</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>HTTP (80) — разрешён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>VLESS (443) — разрешён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Grav CMS (8443) — разрешён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>x-ui dashboard (4443) — разрешён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>VLESS резерв (2096) — разрешён</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Фаервол активен</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Следующее руководство:</strong> настройка Fail2ban — три тюрьмы для SSH: <code>sshd</code>, <code>sshd-ddos</code>, <code>recidive</code>.</p>
+</blockquote>
+<hr />
+<p><em>Конец документа. Настроившему — спокойный сон, забывшему правило SSH — да поможет <code>ufw reset</code> и веб-консоль провайдера.</em></p>
+
+                </section>
+            </section>
+                </section>
+
+    </div>
+
+            <section id="footer" class="section bg-gray">
+    <section class="container grid-lg">
+        <p><a href="https://getgrav.org">Grav</a> was <i class="fa fa-code"></i> with <i class="fa fa-heart-o pulse "></i> by <a href="https://trilby.media">Trilby Media</a>.</p>
+    </section>
+</section>
+    
+        <div class="mobile-container">
+        <div class="overlay" id="overlay">
+            <div class="mobile-logo">
+                <a href="/ru" class="navbar-brand mr-10">
+  <svg xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" viewBox="0 0 504 140" clip-rule="evenodd"><path d="M235.83 71.56h-7.98c-1.2 0-2.2 1-2.2 2.2V89.1l-.15.13c-4.7 3.96-10.64 6.14-16.72 6.14-14.36 0-26.04-11.68-26.04-26.04s11.68-26.04 26.04-26.04c5.58 0 10.92 1.76 15.44 5.1.87.66 2.1.57 2.86-.2l5.7-5.7c.44-.44.67-1.05.63-1.68-.02-.62-.32-1.2-.82-1.6-6.76-5.35-15.2-8.3-23.8-8.3-21.18 0-38.42 17.23-38.42 38.4 0 21.2 17.24 38.42 38.42 38.42 10.93 0 21.4-4.7 28.7-12.9.35-.4.55-.93.55-1.47v-19.6c0-1.22-.98-2.2-2.2-2.2M502.8 34.44c-.4-.6-1.1-.98-1.84-.98h-8.7c-.87 0-1.66.52-2 1.32l-24.5 56.84-24.9-56.85c-.36-.8-1.15-1.3-2.02-1.3h-8.72c-.74 0-1.44.36-1.84.98-.4.62-.48 1.4-.17 2.1l30.2 68.85c.34.8 1.13 1.32 2 1.32h11c.88 0 1.67-.53 2.02-1.33l29.66-68.87c.3-.68.22-1.47-.2-2.1"/><path d="M388.68 34.77c-.35-.8-1.14-1.32-2-1.32h-11c-.88 0-1.67.53-2.02 1.33L344 103.64c-.3.68-.22 1.47.18 2.08.4.62 1.1 1 1.84 1h8.7c.86 0 1.66-.53 2-1.33l24.5-56.86 24.9 56.86c.36.8 1.15 1.32 2.02 1.32h8.72c.74 0 1.44-.38 1.84-1 .4-.62.47-1.4.17-2.1l-30.2-68.85zM309.2 81.52l.47-.22c8.68-4.2 14.28-13.1 14.28-22.67 0-13.88-11.3-25.18-25.17-25.18H266.9c-1.2 0-2.2 1-2.2 2.2v68.86c0 1.23 1 2.22 2.2 2.22h8c1.2 0 2.2-1 2.2-2.2V45.8h21.68c7.05 0 12.8 5.75 12.8 12.8 0 5.9-4 11-9.73 12.42-1.04.26-2.07.4-3.07.4h-7.98c-.83 0-1.6.46-1.96 1.2-.38.73-.3 1.62.2 2.3l22.6 30.87c.42.58 1.08.92 1.78.92h9.9c.84 0 1.6-.47 1.97-1.2.37-.75.3-1.64-.2-2.3l-15.9-21.7zM107.2 80.97c-7.26-4.8-11.4-8.85-15.02-16.1-2.47 4.97-8.24 12.37-17.96 18.2-4.86 15.1-27.96 44-35.43 39.9-2.22-1.2-2.64-2.8-2.15-4.45.54-4.13 9.08-13.62 9.08-13.62s.18 2 2.92 6.18c-3.6-11.2 5.96-25.03 8.5-29.73 3.98-1.27 4.27-6.4 4.27-6.4.26-7.9-3.28-13.63-6.7-17.05 2.46 3 3.25 7.54 3.37 11.7v.02c0 .47 0 .93 0 1.4-.12 3.43-1.16 8.18-3.38 8.18v.03c-2.28-.1-5.1.4-7.63 1.18l-5.6 1.34s2.98-.13 4.6 1.25c-1.8 2.9-5.78 6.53-10.22 8.58-6.45 3-8.3-2.96-5.03-6.84.8-.94 1.62-1.74 2.38-2.4-.5-.5-.8-1.2-.88-2.06 0 0 0 0 0-.02-.46-1.97-.2-4.54 2.6-8.62.54-.86 1.2-1.75 2-2.65.02-.04.04-.07.07-.1.03-.04.07-.08.1-.12.02-.02.04-.04.06-.06.2-.23.42-.45.64-.67 3.34-3.4 8.6-6.96 16.9-10.15C64.4 43.68 67.94 41 67.94 41c1.07-1.1 2.94-2.45 3.63-2.8-5.05-8.77-6.07-21.15-4.75-24.5-.1.2-.2.38-.3.57.5-1.14.83-1.5 1.34-2.1 1.38-1.64 6.06-2.5 7.74.96.9 1.84 1.06 4.23 1.03 6.02-3.7-.2-7.06 4.04-7.06 4.04s3.07-1.46 6.88-1.5c0 0 1 .9 2.28 2.56-1.7 3.2-4.52 10.02-2.5 17.16.35 1.4.86 2.62 1.5 3.65.02.05.04.1.07.14.05.07.1.13.14.2 3.37 5.06 9.54 5.66 9.54 5.66-2.9-1.45-5.27-3.76-6.8-6.56-.82-1.5-1.3-2.77-1.6-3.77-1.64-6.3.77-10 2.14-12.47 3.17-4.9 8.95-7.9 15.15-7.18 8.72 1 14.97 8.86 13.98 17.57-.6 5.32-3.78 9.72-8.15 12.12 1.05 2.84-.07 6.28-.07 6.28 2.64 3.32 2.76 5.23 2.67 7-3.36-.55-6.62 1.7-6.62 1.7s6.48-1.53 10.24 1.82c2.44 2.64 4.08 5 5.05 6.77 1.4 2.5 7.86 2.68 7.12 7.2-.74 4.5-5.68 4.53-13.4-.57M69.56 0C31.15 0 0 31.15 0 69.57c0 38.42 31.15 69.57 69.57 69.57 38.42 0 69.57-31.15 69.57-69.57C139.14 31.15 108 0 69.57 0M73.8 51.7c.8-.82.8-2.14 0-2.95-.82-.82-2.14-.82-2.95 0-.82.8-.82 2.13 0 2.94.8.8 2.13.8 2.95 0M66.45 53.15c-.82.8-.82 2.13 0 2.95.8.8 2.13.8 2.94 0 .8-.82.8-2.14 0-2.95-.82-.8-2.14-.8-2.95 0"/><path d="M79.23 54.23c-1.27-1.27-3.34-1.27-4.6 0l-2.72 2.7c-1.27 1.3-1.27 3.35 0 4.63l3 2.97c1.26 1.28 3.32 1.28 4.6 0l2.7-2.7c1.28-1.28 1.28-3.35 0-4.62l-2.97-2.97zM95.76 41.44c-2.15-2.57 1.87-7.25 4.4-4.46 4.64 5.15-2.25 7.04-4.4 4.46m9.24 2.7c3.45-6.56-1.42-10.4-4.77-13.53-5.36-5.03-10.7-7.2-16.8-.23-6.1 6.98-2.24 15.07 3.35 19.06 5.58 4 14.78 1.25 18.22-5.3"/></svg></a>            </div>
+            <nav class="overlay-menu">
+                
+<ul class="tree">
+                <li>
+      <a href="/ru" class="">
+        История Unix
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn" class="active">
+        Настройка VDS сервера в качестве личного VPN
+      </a>
+            <ul>
+                    <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ot-vds-do-ssh-nastroika-pervichnogo-dostupa" class="">
+        От VDS до SSH: настройка первичного доступа
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nastroika-ssh-zsh-i-udobstva-raboty-na-servere" class="">
+        Настройка SSH, zsh и удобства работы на сервере
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/bazovaya-sistema-lokal-vremya-imya-pamyat" class="">
+        Базовая система: локаль, время, имя, память
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/ufw-nastroika-faervola" class="active">
+        UFW: настройка фаервола
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/unattended-upgrades" class="">
+        Unattended-upgrades: автоматические обновления безопасности
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/postfix" class="">
+        Postfix: отправка писем через Яндекс-релей
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/nginx-php-ssl" class="">
+        Nginx + PHP + SSL: веб-сервер и сертификаты
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/grav-cms" class="">
+        Grav CMS: установка и настройка блога
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/xui-xray" class="">
+        x-ui + Xray: VPN-туннель с VLESS + Reality
+      </a>
+          </li>
+          <li>
+      <a href="/ru/configuring_the_vds_server_as_a_vpn/backups" class="">
+        Бэкапы: автоматическое резервное копирование
+      </a>
+          </li>
+  
+      </ul>
+          </li>
+  
+</ul>
+
+            </nav>
+        </div>
+    </div>
+    
+    <script src="/user/themes/quark/js/jquery.treemenu.js"></script>
+<script src="/user/themes/quark/js/site.js"></script>
+
+
+</body>
+</html>
