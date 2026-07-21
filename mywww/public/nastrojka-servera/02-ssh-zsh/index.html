@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог Мессира | Записки о Unix &amp; Linux</title>
+    <link rel="stylesheet" href="http://srv02.poleckiy.ru/assets/css/terminal.css">
+</head>
+<body>
+    <div class="terminal">
+        <!-- Заголовок терминала -->
+        <header class="terminal-header">
+            <div class="buttons">
+                <span class="btn-red">●</span>
+                <span class="btn-yellow">●</span>
+                <span class="btn-green">●</span>
+            </div>
+            <div class="title">Блог Мессира | Записки о Unix &amp; Linux</div>
+        </header>
+
+        <!-- Навигационное меню -->
+        <nav class="terminal-nav">
+            <a href="http://srv02.poleckiy.ru/" class="">~/главная</a>
+            <a href="http://srv02.poleckiy.ru/series/" class="active">~/серии</a>
+            <a href="http://srv02.poleckiy.ru/archive/" class="">~/архив</a>
+        </nav>
+
+        <!-- Тело терминала -->
+        <main class="terminal-body">
+            <div class="chapter-section">
+    <div class="breadcrumbs">
+        <a href="http://srv02.poleckiy.ru/series/">~/серии</a>
+        / <a href="http://srv02.poleckiy.ru/nastrojka-servera/">Настройка сервера с нуля: от VDS до рабочей системы</a>
+        / Настройка SSH, zsh и удобства работы на сервере    </div>
+
+    <h1><span class="prompt">$</span> cat 02-ssh-zsh.md</h1>
+
+    <div class="chapter-meta">
+        <span class="meta-date">📅 2024-06-08</span>
+                    <span class="meta-tags">
+                🏷️                     <span class="tag">ssh</span>
+                                    <span class="tag">zsh</span>
+                                    <span class="tag">oh-my-zsh</span>
+                                    <span class="tag">безопасность</span>
+                                    <span class="tag">motd</span>
+                            </span>
+            </div>
+
+    <div class="markdown-body chapter-body">
+        <h1>Настройка SSH, zsh и удобства работы на сервере</h1>
+<blockquote>
+<p><em>«Комфорт — вещь субъективная, — заметил Воланд, поправляя воротник. — Но ключи в двери — это объективно.»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство продолжает настройку сервера, начатую в предыдущем документе. Мы начинаем с уже работающего SSH-сервера, к которому можем подключиться по паролю под пользователем <code>user01</code>.</p>
+<p>Цель данного руководства — за один последовательный проход выполнить три группы задач:</p>
+<ol>
+<li><strong>Временно разрешить <code>sudo</code> без пароля</strong> — для удобства последующей настройки (в будущем это будет пересмотрено).</li>
+<li><strong>Настроить SSH-ключи</strong> — безопасный переход от паролей к криптографическим ключам.</li>
+<li><strong>Установить и настроить zsh</strong> — оболочку с темой powerlevel10k, шрифтами и плагинами автодополнения для комфортной работы.</li>
+</ol>
+<p>Все шаги пронумерованы и должны выполняться <strong>в указанном порядке</strong>.</p>
+<blockquote>
+<p><strong>Входные данные:</strong> вы подключены к серверу <code>srv02</code> по SSH пользователем <code>user01</code> с использованием пароля.</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Временная настройка <code>sudo</code> без пароля</h2>
+<h3>1.1. Зачем это нужно</h3>
+<p>В процессе развёртывания систем мы выполним десятки команд через <code>sudo</code>. Постоянный ввод пароля замедляет работу и утомляет. Мы временно отключим запрос пароля для <code>user01</code>.</p>
+<h3>1.2. Создание файла <code>sudoers</code></h3>
+<p>Откройте сессию суперпользователя:</p>
+<pre><code class="language-bash">sudo -i
+</code></pre>
+<p>Система запросит ваш пароль. Введите его. После переключения в режим <code>root</code> (приглашение <code>#</code>) создайте конфигурационный файл:</p>
+<pre><code class="language-bash">echo 'user01 ALL=(ALL) NOPASSWD:ALL' &gt; /etc/sudoers.d/user01
+chmod 440 /etc/sudoers.d/user01
+</code></pre>
+<p>Проверьте синтаксис файлов конфигурации <code>sudo</code>:</p>
+<pre><code class="language-bash">visudo -c
+</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>/etc/sudoers: parsed OK
+/etc/sudoers.d/user01: parsed OK
+</code></pre>
+<p>Если ошибок не обнаружено, выйдите из сессии <code>root</code>:</p>
+<pre><code class="language-bash">exit
+</code></pre>
+<h3>1.3. Проверка</h3>
+<p>Убедитесь, что команды с <code>sudo</code> выполняются мгновенно без запроса пароля:</p>
+<pre><code class="language-bash">sudo whoami
+</code></pre>
+<p>Должно вернуться:</p>
+<pre><code>root
+</code></pre>
+<blockquote>
+<p><em>Воланд задумчиво покачал головой:</em>
+<em>«Открытая дверь — удобная вещь для хозяина. И столь же удобная для всех гостей, включая непрошеных. Пользуйтесь временно, пока настраиваете хозяйство. А потом — закройте, пожалуйста.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 2. Генерация SSH-ключа на рабочей станции</h2>
+<h3>2.1. Анатомия ключей</h3>
+<p>Пара ключей состоит из двух частей:</p>
+<ul>
+<li><strong>Приватный ключ</strong> (<code>id_ed25519</code>) — хранится <strong>строго на вашем компьютере</strong> в секрете.</li>
+<li><strong>Публичный ключ</strong> (<code>id_ed25519.pub</code>) — отправляется на сервер. По нему сервер проверяет вашу подлинность.</li>
+</ul>
+<p>Алгоритм <strong>Ed25519</strong> является современным стандартом — он быстрее и безопаснее старого RSA.</p>
+<h3>2.2. Генерация</h3>
+<p>Этот шаг выполняется <strong>на вашем персональном компьютере</strong> (локальном терминале), а не на сервере!</p>
+<pre><code class="language-bash">ssh-keygen -t ed25519 -C &quot;user01@srv02&quot;
+</code></pre>
+<p>При запросе пути сохранения нажмите Enter (по умолчанию используется <code>~/.ssh/id_ed25519</code>).<br />
+При запросе кодовой фразы (passphrase) вы можете нажать Enter дважды для беспарольного входа по ключу или задать пароль для дополнительной защиты самого файла ключа.</p>
+<hr />
+<h2>Раздел 3. Копирование публичного ключа на сервер</h2>
+<h3>3.1. Использование <code>ssh-copy-id</code></h3>
+<p>На вашем локальном компьютере выполните:</p>
+<pre><code class="language-bash">ssh-copy-id user01@&lt;IP-адрес-сервера&gt;
+</code></pre>
+<p>Введите пароль пользователя <code>user01</code>. Утилита автоматически добавит ваш публичный ключ в файл <code>~/.ssh/authorized_keys</code> на сервере.</p>
+<h3>3.2. Проверка</h3>
+<p>Попробуйте войти на сервер заново:</p>
+<pre><code class="language-bash">ssh user01@&lt;IP-адрес-сервера&gt;
+</code></pre>
+<p>Если всё сделано правильно, сервер впустит вас без запроса пароля.</p>
+<blockquote>
+<p><em>Коровьев, подмигивая:</em>
+<em>«Ключик-то у вас — золотой. Только дверь ещё не заменили. Сейчас поменяем — и старый пароль станет таким же бесполезным, как прошлогодний снег.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 4. Отключение входа по паролю на сервере</h2>
+<h3>4.1. Изменение <code>sshd_config</code></h3>
+<p>Чтобы полностью защититься от брутфорса, отключим аутентификацию по паролям.</p>
+<p>На сервере сделайте резервную копию конфигурационного файла:</p>
+<pre><code class="language-bash">sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%Y%m%d_%H%M%S)
+</code></pre>
+<p>Откройте файл для редактирования:</p>
+<pre><code class="language-bash">sudo nano /etc/ssh/sshd_config
+</code></pre>
+<p>Найдите и установите следующие параметры (раскомментируйте их при необходимости):</p>
+<pre><code>PasswordAuthentication no
+PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+UsePAM yes
+MaxAuthTries 3
+</code></pre>
+<p>Сохраните файл (<code>Ctrl+O</code>, Enter) и закройте редактор (<code>Ctrl+X</code>).</p>
+<h3>4.2. Настройка прав доступа</h3>
+<p>SSH-сервер заблокирует вход по ключу, если права на директории настроены некорректно. Обеспечьте безопасность:</p>
+<pre><code class="language-bash">chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+chmod 755 ~
+</code></pre>
+<h3>4.3. Применение изменений</h3>
+<p>Проверьте конфигурационный файл на синтаксические ошибки:</p>
+<pre><code class="language-bash">sudo sshd -t
+</code></pre>
+<p>Если вывод пуст, примените настройки. В Ubuntu 24.04 служба SSH управляется сокетами, поэтому выполните перезапуск следующим образом:</p>
+<pre><code class="language-bash">sudo systemctl daemon-reload
+sudo systemctl restart ssh.socket
+sudo systemctl restart ssh.service
+</code></pre>
+<h3>4.4. Тестирование соединения</h3>
+<p><strong>Важно: Не закрывайте текущую сессию терминала!</strong> Откройте новое окно на своём компьютере и попробуйте подключиться:</p>
+<pre><code class="language-bash">ssh user01@&lt;IP-адрес-сервера&gt;
+</code></pre>
+<p>Если подключение прошло успешно, значит, всё настроено верно. Старую сессию теперь можно закрыть.</p>
+<hr />
+<h2>Раздел 5. Установка и настройка zsh</h2>
+<h3>5.1. Зачем менять оболочку</h3>
+<p>Стандартный Bash надёжен, но <strong>zsh</strong> предлагает гораздо больше удобств: интеллектуальное автодополнение, исправление опечаток «на лету» и великолепные темы оформления.</p>
+<h3>5.2. Установка зависимостей</h3>
+<pre><code class="language-bash">sudo apt install -y zsh git curl unzip fontconfig
+</code></pre>
+<h3>5.3. Установка oh-my-zsh</h3>
+<p>Фреймворк <strong>oh-my-zsh</strong> упрощает управление плагинами и темами:</p>
+<pre><code class="language-bash">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot; &quot;&quot; --unattended
+</code></pre>
+<p>Установите zsh оболочкой по умолчанию для <code>user01</code>:</p>
+<pre><code class="language-bash">sudo chsh -s $(which zsh) user01
+</code></pre>
+<h3>5.4. Установка темы powerlevel10k</h3>
+<p>Установите популярную тему оформления:</p>
+<pre><code class="language-bash">git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+</code></pre>
+<p>Откройте ваш <code>.zshrc</code>:</p>
+<pre><code class="language-bash">nano ~/.zshrc
+</code></pre>
+<p>Измените значение переменной темы на:</p>
+<pre><code>ZSH_THEME=&quot;powerlevel10k/powerlevel10k&quot;
+</code></pre>
+<h3>5.5. Шрифты Nerd Fonts</h3>
+<p>Тема powerlevel10k использует красивые иконки. Чтобы они отображались корректно:</p>
+<ol>
+<li>Скачайте шрифт <strong>MesloLGS NF</strong> на свой локальный компьютер (ссылка: <a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF.zip">MesloLGS NF.zip</a>).</li>
+<li>Распакуйте и установите шрифт в вашей операционной системе.</li>
+<li>В настройках вашего терминала (iTerm2, Windows Terminal, Kitty и т.д.) выберите шрифт <strong>MesloLGS NF</strong> в качестве основного.</li>
+</ol>
+<h3>5.6. Установка плагинов</h3>
+<p>Добавим полезные плагины для автоматического дополнения и подсветки синтаксиса:</p>
+<pre><code class="language-bash"># Автодополнение из истории команд
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# Подсветка синтаксиса (зелёный — команда верна, красный — ошибочна)
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# Всплывающее меню вариантов
+git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autocomplete
+</code></pre>
+<p>Активируйте их в файле <code>~/.zshrc</code>, заменив строчку <code>plugins=(git)</code> на следующую:</p>
+<pre><code>plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-autocomplete)
+</code></pre>
+<p>Сохраните изменения и выйдите.</p>
+<h3>5.7. Первый запуск и конфигурация</h3>
+<p>Запустите zsh:</p>
+<pre><code class="language-bash">zsh
+</code></pre>
+<p>Тема <code>powerlevel10k</code> сразу запустит интерактивный мастер настройки. Ответьте на несколько вопросов, чтобы настроить стиль приветствия по своему вкусу.</p>
+<hr />
+<h2>Раздел 6. Настройка приветственного баннера и SSH-алиаса</h2>
+<h3>6.1. Замена приветствия сервера (MOTD)</h3>
+<p>При входе на сервер система показывает вам так называемый MOTD (Message of the Day) — сообщение дня. По умолчанию Ubuntu выводит ворох стандартных уведомлений о версии ОС, доступных обновлениях и подсказках.</p>
+<p>Наш сервер достоин лучшего приёма.</p>
+<p>Заменим казёнщину на приветствие в стиле нашего литературного вечера. Создайте скрипт приветствия на сервере:</p>
+<pre><code class="language-bash">sudo tee /etc/update-motd.d/00-voland-banner &gt; /dev/null &lt;&lt; 'BANNER_EOF'
+#!/bin/bash
+cat &lt;&lt; &quot;EOF&quot;
+┌──────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│   Добро пожаловать, дорогой гость.                               │
+│                                                                  │
+│   Квартирный вопрос, как известно, испортил не только москвичей, │
+│   но и многих, кто пытался зайти на этот сервер без приглашения. │
+│                                                                  │
+│   У вас есть ключ? Отлично. Вы — свой.                           │
+│   А если нет — Аннушка масло уже разлила,                        │
+│   и вам лучше не скользить.                                      │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+EOF
+BANNER_EOF
+sudo chmod +x /etc/update-motd.d/00-voland-banner
+</code></pre>
+<p>После этого отключите все стандартные скрипты приветствия, чтобы наш баннер не тонул в шуме:</p>
+<pre><code class="language-bash">cd /etc/update-motd.d &amp;&amp; sudo chmod -x 00-header 10-help-text 50-landscape-sysinfo 50-motd-news 85-fwupd 90-updates-available 91-contract-ua-esm-status 91-release-upgrade 92-unattended-upgrades 95-hwe-eol 97-overlayroot 98-fsck-at-reboot 98-reboot-required
+</code></pre>
+<p>Проверьте результат:</p>
+<pre><code class="language-bash">run-parts /etc/update-motd.d/
+</code></pre>
+<p>Ожидаемый вывод — одиноко парящий баннер в обрамлении тонких линий.</p>
+<h3>6.2. Создание короткого алиаса <code>ssh vpnserver</code></h3>
+<p>Чтобы входить на сервер короткой командой, настройте <strong>ваш локальный компьютер</strong> (не сервер). Отредактируйте или создайте файл <code>~/.ssh/config</code>:</p>
+<pre><code class="language-bash">nano ~/.ssh/config
+</code></pre>
+<p>Добавьте в него следующий блок:</p>
+<pre><code>Host vpnserver
+    HostName &lt;IP-адрес-сервера&gt;
+    User user01
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+</code></pre>
+<p>Сохраните файл. Теперь вы можете входить на сервер одной командой:</p>
+<pre><code class="language-bash">ssh vpnserver
+</code></pre>
+<p>И в ответ получить достойное приветствие.</p>
+<blockquote>
+<p><em>Воланд улыбнулся в тени плаща:</em>
+<em>«Коротко, изящно и со смыслом. Ключ в кармане, алиас в памяти терминала, а сервер у ваших ног. Именно так и должно выглядеть знакомство с приличной машиной.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 7. Итоги</h2>
+<p>На данном этапе мы имеем:</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user01</code> может временно вызывать <code>sudo</code> без пароля</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Пара ключей SSH сгенерирована и привязана</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Вход по паролям полностью заблокирован</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Установлен и настроен zsh по умолчанию</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Установлены плагины подсветки и автодополнения</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>MOTD-баннер настроен</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Алиас <code>ssh vpnserver</code> добавлен в конфигурацию клиента</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Конец документа. Подключившемуся — уютного терминала, забывшему ключ — да поможет <code>journalctl</code>.</em></p>
+    </div>
+
+    <div class="chapter-navigation">
+                    <a class="nav-prev" href="http://srv02.poleckiy.ru/nastrojka-servera/01-pervichnyj-dostup/">
+                ← От VDS до SSH: настройка первичного доступа            </a>
+        
+        <span class="nav-center">Настройка SSH, zsh и удобства работы на сервере</span>
+
+                    <a class="nav-next" href="http://srv02.poleckiy.ru/nastrojka-servera/03-bazovaya-sistema/">
+                Базовая система: локаль, время, имя, память →
+            </a>
+            </div>
+
+    <div class="comments-section">
+        <h2><span class="prompt">$</span> cat comments.txt</h2>
+        <div class="comments-placeholder">
+            <p class="comment-disabled">[!] Комментарии временно отключены. Ведутся технические работы по настройке SMTP-транспорта.</p>
+            <p class="comment-email">✉️ По вопросам и замечаниям: <span class="email-placeholder">root@srv02.poleckiy.ru</span></p>
+        </div>
+    </div>
+</div>
+        </main>
+
+        <!-- Подвал / Статус-бар -->
+        <footer class="terminal-footer">
+            <span class="prompt">user01@srv02:~$</span>
+            <span class="command">cat footer.txt</span>
+            <div class="footer-info">
+                © 2026 srv02. All rights reserved. <span class="blink-cursor">█</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

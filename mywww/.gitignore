@@ -1,0 +1,4 @@
+vendor/
+config/credentials.php
+.DS_Store
+*.log

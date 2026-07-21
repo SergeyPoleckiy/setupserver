@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог Мессира | Записки о Unix &amp; Linux</title>
+    <link rel="stylesheet" href="http://srv02.poleckiy.ru/assets/css/terminal.css">
+</head>
+<body>
+    <div class="terminal">
+        <!-- Заголовок терминала -->
+        <header class="terminal-header">
+            <div class="buttons">
+                <span class="btn-red">●</span>
+                <span class="btn-yellow">●</span>
+                <span class="btn-green">●</span>
+            </div>
+            <div class="title">Блог Мессира | Записки о Unix &amp; Linux</div>
+        </header>
+
+        <!-- Навигационное меню -->
+        <nav class="terminal-nav">
+            <a href="http://srv02.poleckiy.ru/" class="">~/главная</a>
+            <a href="http://srv02.poleckiy.ru/series/" class="">~/серии</a>
+            <a href="http://srv02.poleckiy.ru/archive/" class="active">~/архив</a>
+        </nav>
+
+        <!-- Тело терминала -->
+        <main class="terminal-body">
+            <div class="archive-section">
+    <h1><span class="prompt">$</span> ls -la ~/архив_записей</h1>
+    <p>Полный архив всех опубликованных глав, сгруппированных по месяцам.</p>
+
+    
+                    <div class="archive-month">
+            <h2 class="month-header">
+                <span class="prompt">$</span> ls -la ~/архив/2024-06/
+            </h2>
+            <ul class="archive-list">
+                                    <li class="archive-item">
+                        <span class="archive-date">[2024-06-22]</span>
+                        <span class="archive-series">[nastrojka-servera]</span>
+                        <a href="http://srv02.poleckiy.ru/nastrojka-servera/04-ufw-nastrojka/">
+                            UFW: настройка фаервола                        </a>
+                                                    <span class="archive-tags">
+                                                                    <span class="tag">#ufw</span>
+                                                                    <span class="tag">#фаервол</span>
+                                                                    <span class="tag">#безопасность</span>
+                                                                    <span class="tag">#ssh</span>
+                                                                    <span class="tag">#ubuntu</span>
+                                                            </span>
+                                            </li>
+                                    <li class="archive-item">
+                        <span class="archive-date">[2024-06-15]</span>
+                        <span class="archive-series">[nastrojka-servera]</span>
+                        <a href="http://srv02.poleckiy.ru/nastrojka-servera/03-bazovaya-sistema/">
+                            Базовая система: локаль, время, имя, память                        </a>
+                                                    <span class="archive-tags">
+                                                                    <span class="tag">#locale</span>
+                                                                    <span class="tag">#timezone</span>
+                                                                    <span class="tag">#hostname</span>
+                                                                    <span class="tag">#swap</span>
+                                                                    <span class="tag">#sysctl</span>
+                                                                    <span class="tag">#ubuntu</span>
+                                                            </span>
+                                            </li>
+                                    <li class="archive-item">
+                        <span class="archive-date">[2024-06-08]</span>
+                        <span class="archive-series">[nastrojka-servera]</span>
+                        <a href="http://srv02.poleckiy.ru/nastrojka-servera/02-ssh-zsh/">
+                            Настройка SSH, zsh и удобства работы на сервере                        </a>
+                                                    <span class="archive-tags">
+                                                                    <span class="tag">#ssh</span>
+                                                                    <span class="tag">#zsh</span>
+                                                                    <span class="tag">#oh-my-zsh</span>
+                                                                    <span class="tag">#безопасность</span>
+                                                                    <span class="tag">#motd</span>
+                                                            </span>
+                                            </li>
+                                    <li class="archive-item">
+                        <span class="archive-date">[2024-06-01]</span>
+                        <span class="archive-series">[nastrojka-servera]</span>
+                        <a href="http://srv02.poleckiy.ru/nastrojka-servera/01-pervichnyj-dostup/">
+                            От VDS до SSH: настройка первичного доступа                        </a>
+                                                    <span class="archive-tags">
+                                                                    <span class="tag">#ssh</span>
+                                                                    <span class="tag">#vds</span>
+                                                                    <span class="tag">#ubuntu</span>
+                                                                    <span class="tag">#пользователи</span>
+                                                            </span>
+                                            </li>
+                            </ul>
+        </div>
+    
+    </div>
+        </main>
+
+        <!-- Подвал / Статус-бар -->
+        <footer class="terminal-footer">
+            <span class="prompt">user01@srv02:~$</span>
+            <span class="command">cat footer.txt</span>
+            <div class="footer-info">
+                © 2026 srv02. All rights reserved. <span class="blink-cursor">█</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

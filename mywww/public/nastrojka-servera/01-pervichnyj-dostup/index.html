@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог Мессира | Записки о Unix &amp; Linux</title>
+    <link rel="stylesheet" href="http://srv02.poleckiy.ru/assets/css/terminal.css">
+</head>
+<body>
+    <div class="terminal">
+        <!-- Заголовок терминала -->
+        <header class="terminal-header">
+            <div class="buttons">
+                <span class="btn-red">●</span>
+                <span class="btn-yellow">●</span>
+                <span class="btn-green">●</span>
+            </div>
+            <div class="title">Блог Мессира | Записки о Unix &amp; Linux</div>
+        </header>
+
+        <!-- Навигационное меню -->
+        <nav class="terminal-nav">
+            <a href="http://srv02.poleckiy.ru/" class="">~/главная</a>
+            <a href="http://srv02.poleckiy.ru/series/" class="active">~/серии</a>
+            <a href="http://srv02.poleckiy.ru/archive/" class="">~/архив</a>
+        </nav>
+
+        <!-- Тело терминала -->
+        <main class="terminal-body">
+            <div class="chapter-section">
+    <div class="breadcrumbs">
+        <a href="http://srv02.poleckiy.ru/series/">~/серии</a>
+        / <a href="http://srv02.poleckiy.ru/nastrojka-servera/">Настройка сервера с нуля: от VDS до рабочей системы</a>
+        / От VDS до SSH: настройка первичного доступа    </div>
+
+    <h1><span class="prompt">$</span> cat 01-pervichnyj-dostup.md</h1>
+
+    <div class="chapter-meta">
+        <span class="meta-date">📅 2024-06-01</span>
+                    <span class="meta-tags">
+                🏷️                     <span class="tag">ssh</span>
+                                    <span class="tag">vds</span>
+                                    <span class="tag">ubuntu</span>
+                                    <span class="tag">пользователи</span>
+                            </span>
+            </div>
+
+    <div class="markdown-body chapter-body">
+        <h1>От VDS до SSH: настройка первичного доступа</h1>
+<blockquote>
+<p><em>«Нет ничего проще, чем завести себе удалённый компьютер. Трудности начинаются в тот момент, когда вы пытаетесь им воспользоваться.»</em></p>
+</blockquote>
+<h2>Введение</h2>
+<p>Настоящее руководство охватывает цепочку действий от момента регистрации у провайдера VDS/VPS до первого подключения по SSH под штатным пользователем, отличным от <code>root</code>. Рассматривается <strong>универсальный случай</strong>: образ <strong>Ubuntu 24.04 LTS</strong>, развёрнутый на сервере с <strong>2 ГБ оперативной памяти</strong> и диском объёмом <strong>60 ГБ</strong>.</p>
+<p>Все действия последовательны. Пропускать шаги не рекомендуется — сервер, в отличие от кошки, обычно не приземляется на четыре лапы, если его столкнуть с лестницы.</p>
+<blockquote>
+<p><strong>Предположения:</strong> аккаунт у провайдера создан и оплачен, VDS развёрнут, доступен через веб-консоль провайдера (noVNC) с правами <code>root</code>.</p>
+</blockquote>
+<hr />
+<h2>Раздел 1. Создание сервера в панели провайдера</h2>
+<h3>1.1. Выбор образа</h3>
+<p>В панели управления провайдера создаётся новый сервер (инстанс). При создании выбираются следующие параметры:</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ОС</td>
+<td><strong>Ubuntu 24.04 LTS</strong> (чистый образ, не minimal)</td>
+</tr>
+<tr>
+<td>Регион</td>
+<td>Ближайший к вашему географическому положению</td>
+</tr>
+<tr>
+<td>Тариф</td>
+<td>Конфигурация с <strong>2 ГБ RAM</strong> и <strong>60 ГБ SSD</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Примечание:</strong> Образ должен быть <strong>чистым</strong> («stock»), а не «hardened», «pre-configured» или «panel-ready». Иначе поведение системы может отличаться от описанного в данном руководстве.</p>
+</blockquote>
+<h3>1.2. SSH-ключи при создании</h3>
+<p>На этапе создания сервера провайдер обычно предлагает задать SSH-ключ или пароль. <strong>Выберите: пароль для <code>root</code>.</strong> Ключи будут настроены в отдельном руководстве. Пароль <code>root</code> потребуется для входа через веб-консоль (noVNC).</p>
+<h3>1.3. Развёртывание</h3>
+<p>После запуска процесса провайдер разворачивает сервер. Это занимает от 30 секунд до 3 минут. После завершения сервер получает:</p>
+<ul>
+<li><strong>Публичный IP-адрес</strong> (например, <code>&lt;IP-адрес-сервера&gt;</code>);</li>
+<li><strong>Пароль <code>root</code></strong> (заданный вами или высланный на почту);</li>
+<li><strong>Доступ к веб-консоли</strong> (noVNC) в панели провайдера.</li>
+</ul>
+<blockquote>
+<p><em>«Создать сервер, — заметил Коровьев, вращая трёхпалой рукой колёсико мыши, — дело нехитрое. Нажал кнопку — и вот тебе кусок железа в Амстердаме, Берлине или на Луне. А уж что с ним делать дальше — это, гражданин, уже ваша головная боль.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 2. Первичный вход через веб-консоль (noVNC)</h2>
+<h3>2.1. Что такое веб-консоль провайдера</h3>
+<p><strong>Веб-консоль (noVNC)</strong> — это виртуальный терминал, отображающийся прямо в браузере через панель управления провайдера. Он подключается к эмуляции монитора сервера непосредственно, минуя сеть и SSH. Если вы сломаете фаервол или сетевые настройки — веб-консоль всё равно даст доступ.</p>
+<h3>2.2. Вход</h3>
+<ol>
+<li>Откройте страницу вашего сервера в панели провайдера.</li>
+<li>Найдите кнопку <strong>Console</strong>, <strong>NoVNC</strong>, <strong>VNC</strong> или <strong>Web Terminal</strong>.</li>
+<li>В строке приглашения введите логин и пароль:</li>
+</ol>
+<pre><code>srv02 login: root
+Password: &lt;пароль_root&gt;
+</code></pre>
+<blockquote>
+<p><strong>Примечание:</strong> При вводе пароля символы в консоли <strong>не отображаются</strong>. Это сделано из соображений безопасности. Вводите пароль вслепую и нажимайте Enter.</p>
+</blockquote>
+<p>После успешного входа вы увидите приглашение:</p>
+<pre><code>root@srv02:~#
+</code></pre>
+<blockquote>
+<p><em>Воланд поморщился:</em>
+<em>«Вводить пароль при первом подключении — всё равно что стучаться в дверь собственного дома с криком „Я вернулся!&quot; Дверь откроется. А кто ещё услышал — неизвестно. Но начинать с чего-то надо.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 3. Проверка и установка SSH</h2>
+<h3>3.1. Что такое SSH</h3>
+<p><strong>SSH (Secure Shell)</strong> — протокол для удалённого управления ОС по сети. Без него вам пришлось бы каждый раз открывать медленную веб-консоль в браузере.</p>
+<p>В Ubuntu за работу SSH-сервера отвечает пакет <strong><code>openssh-server</code></strong>.</p>
+<h3>3.2. Проверка службы</h3>
+<p>Проверьте, запущена ли служба SSH:</p>
+<pre><code class="language-bash">systemctl status sshd 2&gt;/dev/null || systemctl status ssh
+</code></pre>
+<h4>Вариант A: служба активна — SSH установлен</h4>
+<p>Если в выводе присутствует <code>Active: active (running)</code>, значит, всё готово к работе. Переходите к <strong>Разделу 4</strong>.</p>
+<h4>Вариант B: служба не найдена</h4>
+<p>Если вы видите <code>Unit sshd.service could not be found</code>, установите её:</p>
+<pre><code class="language-bash">apt update
+apt install -y openssh-server
+systemctl enable --now ssh
+</code></pre>
+<p>Проверьте статус запущенной службы:</p>
+<pre><code class="language-bash">systemctl status ssh
+</code></pre>
+<h3>3.3. Проверка порта</h3>
+<p>Убедитесь, что SSH-сервер слушает стандартный порт 22:</p>
+<pre><code class="language-bash">ss -tlnp | grep :22
+</code></pre>
+<p>Ожидаемый вывод:</p>
+<pre><code>LISTEN 0  128  0.0.0.0:22  0.0.0.0:*  users:((&quot;sshd&quot;,pid=&lt;N&gt;,fd=&lt;N&gt;))
+</code></pre>
+<blockquote>
+<p><em>Воланд, просматривая вывод <code>ss -tlnp</code>:</em>
+<em>«Двадцать второй порт. Стандартный, как ботинки в магазине. Открыт настежь, и каждый сканер в интернете знает об этом. Но пока что двери ещё не заперты — и ключи не сменены. Мы исправим это в своё время.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 4. Создание пользователя <code>user01</code></h2>
+<h3>4.1. Почему не работать под <code>root</code></h3>
+<p>Запускать всё от имени администратора <code>root</code> — крайне опасная практика. Любая опечатка или запущенный вредоносный скрипт могут безвозвратно уничтожить систему. Мы создадим обычного пользователя с правами <strong><code>sudo</code></strong> — возможностью выполнять административные команды по запросу.</p>
+<h3>4.2. Создание пользователя</h3>
+<p>Выполните следующие команды от имени <code>root</code>:</p>
+<pre><code class="language-bash">useradd -m -s /bin/bash user01
+passwd user01
+</code></pre>
+<blockquote>
+<p><strong>Система дважды запросит пароль для <code>user01</code>:</strong> задайте сложный и надёжный пароль.</p>
+</blockquote>
+<p>Параметры команды <code>useradd</code>:</p>
+<ul>
+<li><code>-m</code> — создать домашнюю директорию <code>/home/user01</code>.</li>
+<li><code>-s /bin/bash</code> — установить оболочку Bash в качестве дефолтной.</li>
+</ul>
+<h3>4.3. Настройка прав <code>sudo</code></h3>
+<p>Добавьте пользователя в группу <code>sudo</code>:</p>
+<pre><code class="language-bash">usermod -aG sudo user01
+</code></pre>
+<p>Проверьте права нового пользователя. Переключитесь на него:</p>
+<pre><code class="language-bash">su - user01
+</code></pre>
+<p>И выполните проверочную команду:</p>
+<pre><code class="language-bash">sudo whoami
+</code></pre>
+<p>Система запросит пароль <code>user01</code>. После его ввода вы должны увидеть:</p>
+<pre><code>root
+</code></pre>
+<p>Вернитесь к сессии <code>root</code>:</p>
+<pre><code class="language-bash">exit
+</code></pre>
+<blockquote>
+<p><em>Коровьев хмыкнул:</em>
+<em>«Итак, у нас появился гражданин по имени user01 — существо с правами, но и с ограничениями. Ровно то, что нужно, чтобы не натворить бед по неосторожности.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 5. Подключение по SSH с рабочей станции</h2>
+<h3>5.1. Подключение</h3>
+<p>На вашем локальном компьютере откройте терминал и выполните подключение:</p>
+<pre><code class="language-bash">ssh user01@&lt;IP-адрес-сервера&gt;
+</code></pre>
+<h3>5.2. Первое подключение и Fingerprint</h3>
+<p>При первом подключении SSH выдаст предупреждение о неизвестном ключе хоста:</p>
+<pre><code>The authenticity of host '&lt;IP-адрес-сервера&gt; (&lt;IP-адрес-сервера&gt;)' can't be established.
+ED25519 key fingerprint is SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+</code></pre>
+<p>Введите <code>yes</code> и нажмите Enter. Система запомнит этот ключ. Введите заданный ранее пароль для <code>user01</code>.</p>
+<p>Вы окажетесь в консоли сервера:</p>
+<pre><code>user01@srv02:~$
+</code></pre>
+<p>Знак <code>$</code> указывает на то, что вы вошли как обычный пользователь.</p>
+<h3>5.3. Проверка <code>sudo</code> по сети</h3>
+<p>Убедитесь, что можете выполнять административные команды через удалённое подключение:</p>
+<pre><code class="language-bash">sudo whoami
+</code></pre>
+<p>Ожидаемый вывод после ввода пароля:</p>
+<pre><code>root
+</code></pre>
+<blockquote>
+<p><em>Воланд, наблюдая за процессом входа по SSH:</em>
+<em>«Пароль. По сети. Каждый пакет может быть перехвачен, каждый символ — прочитан. Мы пока так делаем, потому что начинать надо с чего-то простого. Но, уверяю вас, следующая глава будет гораздо интереснее.»</em></p>
+</blockquote>
+<hr />
+<h2>Раздел 6. Итоги</h2>
+<p>На данном этапе мы имеем:</p>
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Сервер развёрнут (Ubuntu 24.04 LTS, 2 ГБ RAM)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Веб-консоль noVNC проверена</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>SSH-сервер запущен на порту 22</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Пользователь <code>user01</code> создан</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Права <code>sudo</code> пользователю предоставлены</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Подключение по SSH с локального компьютера работает</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>В следующем руководстве:</strong> настройка SSH-ключей, изгнание паролей и установка оболочки zsh.</p>
+</blockquote>
+<hr />
+<p><em>Конец документа. Читавшему — свободы, вошедшему — <code>sudo</code>, забывшему пароль — <code>/etc/shadow</code> ему в руки и удачи.</em></p>
+    </div>
+
+    <div class="chapter-navigation">
+                    <span class="nav-prev disabled">← начало серии</span>
+        
+        <span class="nav-center">От VDS до SSH: настройка первичного доступа</span>
+
+                    <a class="nav-next" href="http://srv02.poleckiy.ru/nastrojka-servera/02-ssh-zsh/">
+                Настройка SSH, zsh и удобства работы на сервере →
+            </a>
+            </div>
+
+    <div class="comments-section">
+        <h2><span class="prompt">$</span> cat comments.txt</h2>
+        <div class="comments-placeholder">
+            <p class="comment-disabled">[!] Комментарии временно отключены. Ведутся технические работы по настройке SMTP-транспорта.</p>
+            <p class="comment-email">✉️ По вопросам и замечаниям: <span class="email-placeholder">root@srv02.poleckiy.ru</span></p>
+        </div>
+    </div>
+</div>
+        </main>
+
+        <!-- Подвал / Статус-бар -->
+        <footer class="terminal-footer">
+            <span class="prompt">user01@srv02:~$</span>
+            <span class="command">cat footer.txt</span>
+            <div class="footer-info">
+                © 2026 srv02. All rights reserved. <span class="blink-cursor">█</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

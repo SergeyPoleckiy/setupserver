@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог Мессира | Записки о Unix &amp; Linux</title>
+    <link rel="stylesheet" href="http://srv02.poleckiy.ru/assets/css/terminal.css">
+</head>
+<body>
+    <div class="terminal">
+        <!-- Заголовок терминала -->
+        <header class="terminal-header">
+            <div class="buttons">
+                <span class="btn-red">●</span>
+                <span class="btn-yellow">●</span>
+                <span class="btn-green">●</span>
+            </div>
+            <div class="title">Блог Мессира | Записки о Unix &amp; Linux</div>
+        </header>
+
+        <!-- Навигационное меню -->
+        <nav class="terminal-nav">
+            <a href="http://srv02.poleckiy.ru/" class="">~/главная</a>
+            <a href="http://srv02.poleckiy.ru/series/" class="active">~/серии</a>
+            <a href="http://srv02.poleckiy.ru/archive/" class="">~/архив</a>
+        </nav>
+
+        <!-- Тело терминала -->
+        <main class="terminal-body">
+            <div class="series-single-section">
+    <div class="breadcrumbs">
+        <a href="http://srv02.poleckiy.ru/series/">~/серии</a> / Настройка сервера с нуля: от VDS до рабочей системы    </div>
+
+    <h1><span class="prompt">$</span> cat nastrojka-servera.md</h1>
+    <div class="markdown-body">
+        <p>Пошаговое руководство по настройке Linux-сервера на примере Ubuntu 24.04 LTS.</p>
+<p>Цикл статей ведёт от момента создания VDS до полностью настроенной системы с SSH по ключам, оболочкой zsh, базовой конфигурацией системы и фаерволом UFW.</p>
+<p>Каждая глава — законченный этап настройки. Все команды проверены на чистом образе Ubuntu 24.04 LTS с 2 ГБ RAM.</p>
+    </div>
+
+            <div class="prerequisites-block">
+            <h3><span class="prompt">#</span> Пререквизиты:</h3>
+            <ul>
+                                    <li>Ubuntu 24.04 LTS</li>
+                                    <li>VDS/VPS с 2 ГБ RAM</li>
+                                    <li>базовые навыки работы с терминалом</li>
+                            </ul>
+        </div>
+    
+    <h2><span class="prompt">$</span> ls -la ~/серии/nastrojka-servera</h2>
+    
+    <div class="progress-container-large">
+                <div class="progress-bar-wrapper">
+            <div class="progress-bar" style="width: 100%"></div>
+        </div>
+        <span class="progress-text-large">Завершено на 100% (4 из 4 глав опубликовано)</span>
+    </div>
+
+    <ol class="chapters-list">
+                    <li class="chapter-item published">
+                <span class="chapter-status-indicator">[OK]</span>
+                                    <a href="http://srv02.poleckiy.ru/nastrojka-servera/01-pervichnyj-dostup/">От VDS до SSH: настройка первичного доступа</a>
+                            </li>
+                    <li class="chapter-item published">
+                <span class="chapter-status-indicator">[OK]</span>
+                                    <a href="http://srv02.poleckiy.ru/nastrojka-servera/02-ssh-zsh/">Настройка SSH, zsh и удобства работы на сервере</a>
+                            </li>
+                    <li class="chapter-item published">
+                <span class="chapter-status-indicator">[OK]</span>
+                                    <a href="http://srv02.poleckiy.ru/nastrojka-servera/03-bazovaya-sistema/">Базовая система: локаль, время, имя, память</a>
+                            </li>
+                    <li class="chapter-item published">
+                <span class="chapter-status-indicator">[OK]</span>
+                                    <a href="http://srv02.poleckiy.ru/nastrojka-servera/04-ufw-nastrojka/">UFW: настройка фаервола</a>
+                            </li>
+            </ol>
+</div>
+        </main>
+
+        <!-- Подвал / Статус-бар -->
+        <footer class="terminal-footer">
+            <span class="prompt">user01@srv02:~$</span>
+            <span class="command">cat footer.txt</span>
+            <div class="footer-info">
+                © 2026 srv02. All rights reserved. <span class="blink-cursor">█</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

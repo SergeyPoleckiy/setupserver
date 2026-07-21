@@ -1,0 +1,11 @@
+# OS
+.DS_Store
+*.log
+Thumbs.db
+
+# PHP
+vendor/
+mywww/config/credentials.php
+
+# Archives
+*.tar.gz
